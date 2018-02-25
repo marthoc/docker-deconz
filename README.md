@@ -1,6 +1,6 @@
 **For Testing Only**
 
-deCONZ version: **2.05.05**
+deCONZ version: **2.05.07**
 
 ```
 docker run -d \
