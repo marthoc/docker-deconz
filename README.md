@@ -4,7 +4,7 @@ This image containerizes the deCONZ software from Dresden Elektronik, which cont
 
 Current deCONZ version: **2.05.08**
 
-*Note: At this time, only `amd64/x86\_64` is supported. `armhf` support will be added soon.*
+*Note: At this time, only `amd64/x86_64` is supported. `armhf` support will be added soon.*
 
 ### Running the deCONZ Container
 
