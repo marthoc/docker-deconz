@@ -25,8 +25,8 @@ docker run -d \
 
 #### Command line Options:  
 
-`--name deconz`: Names the container "deconz".  
-`--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
+`--name=deconz`: Names the container "deconz".  
+`--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
 `--restart=always`: Start the container when Docker starts (i.e. on boot/reboot).  
 `--privileged`: Required; from previous testing privilege mode only became necessary in the late .90's series of deCONZ beta releases, but now the container must be privileged or deCONZ will fail to start.  
 `-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`: Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.  
@@ -35,7 +35,7 @@ docker run -d \
 
 #### Environment Variables:
 
-`-e DECONZ_WEB_PORT=8080`: By default, the web UIs (Wireless Light and Phoscon) listen on port 80; only set this environment variable if you wish to change the listen port.  
+`-e DECONZ_WEB_PORT=8080`: By default, the web UIs ("Wireless Light Control" and "Phoscon") and the REST API listen on port 80; only set this environment variable if you wish to change the listen port.  
 `-e DECONZ_WS_PORT=8443`: By default, the websockets service listens on port 443; only set this environment variable if you wish to change the listen port.  
 `-e DEBUG_INFO=1`: Sets the level of the deCONZ command-line flag --dbg-info (default 1).  
 `-e DEBUG_APS=0`: Sets the level of the deCONZ command-line flag --dbg-aps (default 0).  
