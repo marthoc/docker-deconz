@@ -1,6 +1,6 @@
 ## deCONZ Docker Image
 
-This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee serial interface. _Note: Currently, only the Conbee USB device is supported by this image; support for RaspBee will be added soon._
+This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. _Note: Currently, only the Conbee USB device is supported by this image; support for RaspBee will be added soon._ This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
 
 This image currently supports Conbee on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
 
@@ -92,9 +92,7 @@ docker run -d \
 
 ### Gotchas / Known Issues
 
-armhf is not yet supported, but will be soon.
-
-RaspBee is not yet supported, but will be soon.
+RaspBee is not yet supported, but will be soon; nevertheless, it may work with the armhf variant of this image.
 
 Firmware updates from the web UI do not work (they will fail silently and the USB device will stay at its current firmware level).
 
@@ -113,13 +111,14 @@ Pulling `marthoc/deconz` from Docker Hub is the recommended way to obtain this i
 ```bash
 git clone https://github.com/marthoc/docker-deconz.git
 cd docker-deconz
-docker build -t "[your-user]/deconz[:local]" ./amd64
+docker build -t "[your-user/]deconz[:local]" ./[arch]
 ```
 
 Where:  
-`[your-user]`: Your username (optional).  
-`[node-red]`: The name you want the built Docker image to have on your system (default: deconz).  
-`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).  
+`[your-user/]`: Your username (optional).  
+`deconz`: The name you want the built Docker image to have on your system (default: deconz).  
+`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).
+`[arch]`: The architecture you want to build for (currently supported options: `amd64` and `armhf`).
 
 ### Acknowledgments
 
