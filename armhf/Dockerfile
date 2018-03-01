@@ -35,7 +35,7 @@ RUN dpkg -i /wiringpi.deb && \
     rm -f /wiringpi.deb
 
 # Add tini, start.sh, and Conbee udev data; set execute permissions
-ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini /tini
+ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-armhf /tini
 COPY root /
 RUN chmod +x /tini && \
     chmod +x /start.sh
