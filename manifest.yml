@@ -6,8 +6,8 @@ manifests:
       architecture: amd64
       os: linux
   -
-    image: marthoc/deconz:arm
+    image: marthoc/deconz:armhf
     platform:
-      architecture: armhf
+      architecture: arm
       variant: armv7l
       os: linux
