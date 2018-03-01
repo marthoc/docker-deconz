@@ -57,7 +57,7 @@ services:
     restart: always
     privileged: true
     volumes:
-      - /opt/deconz:/root/.local/share/dresden-elektronik/deconz
+      - /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ
     devices:
       - /dev/ttyUSB0
     environment:
