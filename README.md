@@ -1,10 +1,10 @@
 ## deCONZ Docker Image
 
-This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a serial interface. _Note: Currently, only the DE Conbee USB device is supported by this image; support for RaspBee will be added soon._
+This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee serial interface. _Note: Currently, only the Conbee USB device is supported by this image; support for RaspBee will be added soon._
+
+This image currently supports Conbee on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
 
 Current deCONZ version: **2.05.08**
-
-*Note: At this time, only `amd64/x86_64` is supported. `armhf` support will be added soon.*
 
 ### Running the deCONZ Container
 
@@ -31,6 +31,7 @@ docker run -d \
 `--privileged`: Required; from previous testing privilege mode only became necessary in the late .90's series of deCONZ beta releases, but now the container must be privileged or deCONZ will fail to start.  
 `-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`: Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.  
 `--device=/dev/ttyUSB0`: Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ.  
+`marthoc/deconz`: This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.
 
 #### Environment Variables:
 
