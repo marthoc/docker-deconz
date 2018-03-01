@@ -1,10 +1,10 @@
 ## deCONZ Docker Image
 
-This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a serial interface. _Note: Currently, only the DE Conbee USB device is supported by this image; support for RaspBee will be added soon._
+This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. _Note: Currently, only the Conbee USB device is supported by this image; support for RaspBee will be added soon._ This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
+
+This image currently supports Conbee on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
 
 Current deCONZ version: **2.05.08**
-
-*Note: At this time, only `amd64/x86_64` is supported. `armhf` support will be added soon.*
 
 ### Running the deCONZ Container
 
@@ -25,16 +25,17 @@ docker run -d \
 
 #### Command line Options:  
 
-`--name deconz`: Names the container "deconz".  
-`--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
+`--name=deconz`: Names the container "deconz".  
+`--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
 `--restart=always`: Start the container when Docker starts (i.e. on boot/reboot).  
 `--privileged`: Required; from previous testing privilege mode only became necessary in the late .90's series of deCONZ beta releases, but now the container must be privileged or deCONZ will fail to start.  
 `-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`: Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.  
 `--device=/dev/ttyUSB0`: Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ.  
+`marthoc/deconz`: This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.
 
 #### Environment Variables:
 
-`-e DECONZ_WEB_PORT=8080`: By default, the web UIs (Wireless Light and Phoscon) listen on port 80; only set this environment variable if you wish to change the listen port.  
+`-e DECONZ_WEB_PORT=8080`: By default, the web UIs ("Wireless Light Control" and "Phoscon") and the REST API listen on port 80; only set this environment variable if you wish to change the listen port.  
 `-e DECONZ_WS_PORT=8443`: By default, the websockets service listens on port 443; only set this environment variable if you wish to change the listen port.  
 `-e DEBUG_INFO=1`: Sets the level of the deCONZ command-line flag --dbg-info (default 1).  
 `-e DEBUG_APS=0`: Sets the level of the deCONZ command-line flag --dbg-aps (default 0).  
@@ -91,9 +92,7 @@ docker run -d \
 
 ### Gotchas / Known Issues
 
-armhf is not yet supported, but will be soon.
-
-RaspBee is not yet supported, but will be soon.
+RaspBee is not yet supported, but will be soon; nevertheless, it may work with the armhf variant of this image.
 
 Firmware updates from the web UI do not work (they will fail silently and the USB device will stay at its current firmware level).
 
@@ -112,13 +111,14 @@ Pulling `marthoc/deconz` from Docker Hub is the recommended way to obtain this i
 ```bash
 git clone https://github.com/marthoc/docker-deconz.git
 cd docker-deconz
-docker build -t "[your-user]/deconz[:local]" ./amd64
+docker build -t "[your-user/]deconz[:local]" ./[arch]
 ```
 
 Where:  
-`[your-user]`: Your username (optional).  
-`[node-red]`: The name you want the built Docker image to have on your system (default: deconz).  
-`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).  
+`[your-user/]`: Your username (optional).  
+`deconz`: The name you want the built Docker image to have on your system (default: deconz).  
+`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).
+`[arch]`: The architecture you want to build for (currently supported options: `amd64` and `armhf`).
 
 ### Acknowledgments
 
