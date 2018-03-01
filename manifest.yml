@@ -1,0 +1,13 @@
+image: marthoc/deconz:latest
+manifests:
+  -
+    image: marthoc/deconz:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  -
+    image: marthoc/deconz:arm
+    platform:
+      architecture: armhf
+      variant: armv7l
+      os: linux
