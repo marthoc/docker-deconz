@@ -4,7 +4,7 @@ This image containerizes the deCONZ software from Dresden Elektronik, which cont
 
 This image currently supports Conbee on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
 
-Current deCONZ version: **2.05.08**
+Current deCONZ version: **2.05.10**
 
 ### Running the deCONZ Container
 

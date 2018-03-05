@@ -1,22 +1,23 @@
 FROM arm32v7/debian:stretch-slim
 
 # Build environment variables
-ENV TINI_VERSION=0.17.0
-ENV DECONZ_VERSION=2.05.08
-ENV WIRINGPI_VERSION="2.44+1"
+ENV TINI_VERSION=0.17.0 \
+    DECONZ_VERSION=2.05.10 \
+    WIRINGPI_VERSION="2.44+1"
 
 # Runtime environment variables
-ENV DECONZ_WEB_PORT=80
-ENV DECONZ_WS_PORT=443
-ENV DEBUG_INFO=1
-ENV DEBUG_APS=0
-ENV DEBUG_ZCL=0
-ENV DEBUG_ZDP=0
-ENV DEBUG_OTAU=0
+ENV DECONZ_WEB_PORT=80 \
+    DECONZ_WS_PORT=443 \
+    DEBUG_INFO=1 \
+    DEBUG_APS=0 \
+    DEBUG_ZCL=0 \
+    DEBUG_ZDP=0 \
+    DEBUG_OTAU=0
 
 # Install deCONZ dependencies (except for WiringPi)
 RUN apt-get update && \
     apt-get install -y \
+        jq \
         libcap2-bin \
         libqt5core5a \
         libqt5gui5 \
