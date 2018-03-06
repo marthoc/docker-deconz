@@ -1,8 +1,12 @@
 ## deCONZ Docker Image
 
-This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. _Note: Currently, only the Conbee USB device is supported by this image; support for RaspBee will be added soon._ This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
+[![Build Status](https://travis-ci.org/marthoc/docker-deconz.svg?branch=master)](https://travis-ci.org/marthoc/docker-deconz)
 
-This image currently supports Conbee on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
+This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
+
+Conbee is currently supported on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures. _RaspBee is currently unsupported on `armhf` but may nevertheless work._
+
+This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
 Current deCONZ version: **2.05.10**
 
