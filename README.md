@@ -1,8 +1,12 @@
 ## deCONZ Docker Image
 
-This image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. _Note: Currently, only the Conbee USB device is supported by this image; support for RaspBee will be added soon._ This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
+[![Build Status](https://travis-ci.org/marthoc/docker-deconz.svg?branch=master)](https://travis-ci.org/marthoc/docker-deconz)
 
-This image currently supports Conbee on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
+This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
+
+Conbee is currently supported on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures. _RaspBee is currently unsupported on `armhf` but may nevertheless work._
+
+This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
 Current deCONZ version: **2.05.10**
 
@@ -15,7 +19,6 @@ docker run -d \
     --name=deconz \
     --net=host \
     --restart=always \
-    --privileged \
     -v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ \
     --device=/dev/ttyUSB0 \
     -e DECONZ_WEB_PORT=8080 \
@@ -28,7 +31,6 @@ docker run -d \
 `--name=deconz`: Names the container "deconz".  
 `--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
 `--restart=always`: Start the container when Docker starts (i.e. on boot/reboot).  
-`--privileged`: Required; from previous testing privilege mode only became necessary in the late .90's series of deCONZ beta releases, but now the container must be privileged or deCONZ will fail to start.  
 `-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`: Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.  
 `--device=/dev/ttyUSB0`: Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ.  
 `marthoc/deconz`: This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.
@@ -49,13 +51,12 @@ A docker-compose.yml file is provided in the root of this image's GitHub repo. Y
 
 ```yaml
 version: "2"
-services: 
+services:
   deconz:
     image: marthoc/deconz
     container_name: deconz
     network_mode: host
     restart: always
-    privileged: true
     volumes:
       - /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ
     devices:
@@ -82,7 +83,6 @@ docker run -d \
     -p 80:80 \
     -p 443:443 \
     --restart=always \
-    --privileged \
     -v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ \
     --device=/dev/ttyUSB0 \
     -e DECONZ_WEB_PORT=80 \
@@ -117,7 +117,7 @@ docker build -t "[your-user/]deconz[:local]" ./[arch]
 Where:  
 `[your-user/]`: Your username (optional).  
 `deconz`: The name you want the built Docker image to have on your system (default: deconz).  
-`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).
+`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).  
 `[arch]`: The architecture you want to build for (currently supported options: `amd64` and `armhf`).
 
 ### Acknowledgments
