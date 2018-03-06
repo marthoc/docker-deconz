@@ -39,7 +39,8 @@ RUN chmod +x /tini && \
 ADD https://www.dresden-elektronik.de/deconz/ubuntu/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
-    mkdir /root/otau
+    mkdir /root/otau && \
+    chown root:root /usr/bin/deCONZ*
 
 VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 

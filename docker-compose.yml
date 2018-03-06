@@ -5,7 +5,6 @@ services:
     container_name: deconz
     network_mode: host
     restart: always
-    privileged: true
     volumes:
       - /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ
     devices:
