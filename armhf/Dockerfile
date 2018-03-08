@@ -1,4 +1,4 @@
-FROM resin/rpi-raspbian:stretch
+FROM resin/armv7hf-debian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.17.0 \
