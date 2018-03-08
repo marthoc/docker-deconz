@@ -2,7 +2,7 @@ FROM resin/rpi-raspbian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.17.0 \
-    DECONZ_VERSION=2.05.10 \
+    DECONZ_VERSION=2.05.11 \
     WIRINGPI_VERSION="2.44+1"
 
 # Runtime environment variables
