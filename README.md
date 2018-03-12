@@ -4,11 +4,11 @@
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
 
-Conbee is currently supported on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures. _RaspBee is currently unsupported on `armhf` but may nevertheless work._
+Both Conbee and RaspBee are supported on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
-Current deCONZ version: **2.05.11**
+Current deCONZ version: **2.05.12**
 
 ### Running the deCONZ Container
 
@@ -32,7 +32,7 @@ docker run -d \
 `--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
 `--restart=always`: Start the container when Docker starts (i.e. on boot/reboot).  
 `-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`: Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.  
-`--device=/dev/ttyUSB0`: Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ.  
+`--device=/dev/ttyUSB0`: Pass the serial device at ttyUSB0 (i.e. a Conbee USB device or RaspBee GPIO device) into the container for use by deCONZ.  
 `marthoc/deconz`: This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.
 
 #### Environment Variables:
@@ -91,8 +91,6 @@ docker run -d \
 ```
 
 ### Gotchas / Known Issues
-
-RaspBee is not yet supported, but will be soon; nevertheless, it may work with the armhf variant of this image.
 
 Firmware updates from the web UI do not work (they will fail silently and the USB device will stay at its current firmware level).
 

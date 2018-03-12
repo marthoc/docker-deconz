@@ -10,8 +10,17 @@ install:
   - wget https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64 -O manifest-tool
   - chmod +x manifest-tool
 script:
-# Build and push amd64
+# Build amd64
   - docker build -t "marthoc/deconz:amd64" ./amd64
+# Build amd64 Hass.io addon
+  - docker build -t "marthoc/hassio-addon-deconz-amd64" ./amd64-hassio-addon
+# Build armhf
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker build -t "marthoc/deconz:armhf" ./armhf
+# Build armhf Hass.io addon
+  - docker build -t "marthoc/hassio-addon-deconz-armhf" ./armhf-hassio-addon
+after_success:
+# Tag and push built images
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
@@ -19,35 +28,12 @@ script:
       docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-$VERSION
       docker push marthoc/deconz:amd64
       docker push marthoc/deconz:amd64-$VERSION
-    fi
-# Build and push amd64 Hass.io addon
-  - docker build -t "marthoc/hassio-addon-deconz-amd64" ./amd64-hassio-addon
-  - >
-    if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-      docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
-      VERSION=$(cat .VERSION)
       docker tag marthoc/hassio-addon-deconz-amd64 marthoc/hassio-addon-deconz-amd64:$VERSION
       docker push marthoc/hassio-addon-deconz-amd64
       docker push marthoc/hassio-addon-deconz-amd64:$VERSION
-    fi
-# Build and push armhf
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build -t "marthoc/deconz:armhf" ./armhf
-  - >
-    if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-      docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
-      VERSION=$(cat .VERSION)
       docker tag marthoc/deconz:armhf marthoc/deconz:armhf-$VERSION
       docker push marthoc/deconz:armhf
       docker push marthoc/deconz:armhf-$VERSION
-    fi
-# Build and push armhf Hass.io addon
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build -t "marthoc/hassio-addon-deconz-armhf" ./armhf-hassio-addon
-  - >
-    if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-      docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
-      VERSION=$(cat .VERSION)
       docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-armhf:$VERSION
       docker push marthoc/hassio-addon-deconz-armhf
       docker push marthoc/hassio-addon-deconz-armhf:$VERSION
