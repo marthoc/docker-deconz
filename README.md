@@ -8,7 +8,7 @@ Both Conbee and RaspBee are supported on both `amd64` and `armhf` (i.e. Raspberr
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
-Current deCONZ version: **2.05.12**
+Current deCONZ version: **2.05.14**
 
 ### Running the deCONZ Container
 
