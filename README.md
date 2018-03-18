@@ -4,11 +4,11 @@
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
 
-Both Conbee and RaspBee are supported on both `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures.
+Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures; RaspBee is supported on `armhf` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
-Current deCONZ version: **2.05.12**
+Current deCONZ version: **2.05.14**
 
 ### Running the deCONZ Container
 
@@ -21,31 +21,35 @@ docker run -d \
     --restart=always \
     -v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ \
     --device=/dev/ttyUSB0 \
-    -e DECONZ_WEB_PORT=8080 \
-    -e DECONZ_WS_PORT=8443 \
     marthoc/deconz
 ```
 
-#### Command line Options:  
+#### Command line Options
 
-`--name=deconz`: Names the container "deconz".  
-`--net=host`: Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.  
-`--restart=always`: Start the container when Docker starts (i.e. on boot/reboot).  
-`-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`: Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.  
-`--device=/dev/ttyUSB0`: Pass the serial device at ttyUSB0 (i.e. a Conbee USB device or RaspBee GPIO device) into the container for use by deCONZ.  
-`marthoc/deconz`: This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.
+|Parameter|Description|
+|---------|-----------|
+|`--name=deconz`|Names the container "deconz".|
+|`--net=host`|Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.|
+|`--restart=always`|Start the container when Docker starts (i.e. on boot/reboot).|
+|`-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`|Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.|
+|`--device=/dev/ttyUSB0`|Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ (if using RaspBee, use /dev/ttyAMA0).|
+|`marthoc/deconz`|This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.|
 
-#### Environment Variables:
+#### Environment Variables
 
-`-e DECONZ_WEB_PORT=8080`: By default, the web UIs ("Wireless Light Control" and "Phoscon") and the REST API listen on port 80; only set this environment variable if you wish to change the listen port.  
-`-e DECONZ_WS_PORT=8443`: By default, the websockets service listens on port 443; only set this environment variable if you wish to change the listen port.  
-`-e DEBUG_INFO=1`: Sets the level of the deCONZ command-line flag --dbg-info (default 1).  
-`-e DEBUG_APS=0`: Sets the level of the deCONZ command-line flag --dbg-aps (default 0).  
-`-e DEBUG_ZCL=0`: Sets the level of the deCONZ command-line flag --dbg-zcl (default 0).  
-`-e DEBUG_ZDP=0`: Sets the level of the deCONZ command-line flag --dbg-zdp (default 0).  
-`-e DEBUG_OTAU=0`: Sets the level of the deCONZ command-line flag --dbg-otau (default 0).  
+Use these environment variables to change the default behaviour of the container.
 
-#### Docker-Compose:
+|Parameter|Description|
+|---------|-----------|
+|`-e DECONZ_WEB_PORT=8080`|By default, the web UIs ("Wireless Light Control" and "Phoscon") and the REST API listen on port 80; only set this environment variable if you wish to change the listen port.|
+|`-e DECONZ_WS_PORT=8443`|By default, the websockets service listens on port 443; only set this environment variable if you wish to change the listen port.|
+|`-e DEBUG_INFO=1`|Sets the level of the deCONZ command-line flag --dbg-info (default 1).|
+|`-e DEBUG_APS=0`|Sets the level of the deCONZ command-line flag --dbg-aps (default 0).|
+|`-e DEBUG_ZCL=0`|Sets the level of the deCONZ command-line flag --dbg-zcl (default 0).|
+|`-e DEBUG_ZDP=0`|Sets the level of the deCONZ command-line flag --dbg-zdp (default 0).|
+|`-e DEBUG_OTAU=0`|Sets the level of the deCONZ command-line flag --dbg-otau (default 0).|
+
+#### Docker-Compose
 
 A docker-compose.yml file is provided in the root of this image's GitHub repo. You may also copy/paste the following into your existing docker-compose.yml, modifying the options as required (omit the `version` and `services` lines as your docker-compose.yml will already contain these).
 
@@ -73,7 +77,7 @@ services:
 
 Then, you can do `docker-compose pull` to pull the latest marthoc/deconz image, `docker-compose up -d` to start the deconz container service, and `docker-compose down` to stop the deconz service and delete the container. Note that these commands will also pull, start, and stop any other services defined in docker-compose.yml.
 
-#### Running on Docker for Mac / Docker for Windows:
+#### Running on Docker for Mac / Docker for Windows
 
 The `--net=host` option is not yet supported on Mac/Windows. To run this container on those platforms, explicitly specify the ports in the run command and omit `--net=host`:
 
@@ -89,6 +93,18 @@ docker run -d \
     -e DECONZ_WS_PORT=443 \
     marthoc/deconz
 ```
+
+### Configuring Raspbian for RaspBee
+
+By default, Raspbian configures a login shell over serial (tty); you must disable this and enable the serial port hardware to allow RaspBee to work.
+
+On a fresh install of Raspbian:
+1. `sudo raspi-config`
+2. Select `Interfacing Options`
+3. Select `Serial`
+4. “Would you like a login shell to be accessible over serial?” Select `No`
+5. “Would you like the serial port hardware to be enabled?” Select `Yes`
+6. Exit raspi-config and reboot
 
 ### Gotchas / Known Issues
 
@@ -112,11 +128,12 @@ cd docker-deconz
 docker build -t "[your-user/]deconz[:local]" ./[arch]
 ```
 
-Where:  
-`[your-user/]`: Your username (optional).  
-`deconz`: The name you want the built Docker image to have on your system (default: deconz).  
-`[local]`: Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).  
-`[arch]`: The architecture you want to build for (currently supported options: `amd64` and `armhf`).
+|Parameter|Description|
+|---------|-----------|
+|`[your-user/]`|Your username (optional).|
+|`deconz`|The name you want the built Docker image to have on your system (default: deconz).|
+|`[local]`|Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).|
+|`[arch]`|The architecture you want to build for (currently supported options: `amd64` and `armhf`).|
 
 ### Acknowledgments
 
