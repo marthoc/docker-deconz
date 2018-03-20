@@ -96,15 +96,16 @@ docker run -d \
 
 ### Configuring Raspbian for RaspBee
 
-By default, Raspbian configures a login shell over serial (tty); you must disable this and enable the serial port hardware to allow RaspBee to work.
+By default, Raspbian enables Bluetooth and configures a login shell over serial (tty); you must disable BT, disable the tty, and enable the serial port hardware to allow RaspBee to work properly under Docker.
 
 On a fresh install of Raspbian:
-1. `sudo raspi-config`
-2. Select `Interfacing Options`
-3. Select `Serial`
-4. “Would you like a login shell to be accessible over serial?” Select `No`
-5. “Would you like the serial port hardware to be enabled?” Select `Yes`
-6. Exit raspi-config and reboot
+1. `echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
+2. `sudo raspi-config`
+3. Select `Interfacing Options`
+4. Select `Serial`
+5. “Would you like a login shell to be accessible over serial?” Select `No`
+6. “Would you like the serial port hardware to be enabled?” Select `Yes`
+7. Exit raspi-config and reboot
 
 ### Gotchas / Known Issues
 
