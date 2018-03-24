@@ -16,7 +16,9 @@ ENV DECONZ_WEB_PORT=80 \
 # Install deCONZ dependencies
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         jq \
+        kmod \
         libcap2-bin \
         libqt5core5a \
         libqt5gui5 \
@@ -25,7 +27,8 @@ RUN apt-get update && \
         libqt5sql5 \
         libqt5websockets5 \
         libqt5widgets5 \
-        sqlite3 && \
+        sqlite3 \
+        wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -33,7 +36,8 @@ RUN apt-get update && \
 ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini /tini
 COPY root /
 RUN chmod +x /tini && \
-    chmod +x /start.sh
+    chmod +x /start.sh && \
+    chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
 ADD https://www.dresden-elektronik.de/deconz/ubuntu/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb

@@ -17,7 +17,9 @@ ENV DECONZ_WEB_PORT=80 \
 # Install deCONZ dependencies (except for WiringPi)
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         jq \
+        kmod \
         libcap2-bin \
         libqt5core5a \
         libqt5gui5 \
@@ -26,7 +28,8 @@ RUN apt-get update && \
         libqt5sql5 \
         libqt5websockets5 \
         libqt5widgets5 \
-        sqlite3 && \
+        sqlite3 \
+        wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
