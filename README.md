@@ -109,7 +109,7 @@ On a fresh install of Raspbian:
 
 ### Updating Conbee/RaspBee Firmware
 
-Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. To use it, follow the below instructions:
+Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch. To use it, follow the below instructions:
 
 1. Check your deCONZ container logs for the update firmware file name: type `docker logs [container name]`, and look for lines near the beginning of the log that look like this, noting the .CGF file name listed (you'll need this later):
 ```
@@ -120,12 +120,21 @@ GW firmware version shall be updated to: 0x261e0500
 
 2. `docker stop [container name]` or `docker-compose down` to stop your running deCONZ container (you must do this or the firmware update will fail).
 
-3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules marthoc/deconz`
+3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
 
 4. Follow the prompts:
-- Type L to list attached devices, then type the number that corresponds to the Conbee or RaspBee device in the listing.
-- Type or paste the file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
-- If the firmware download is OK, the MD5 signature matches, and the device number and file name look OK, type Y to start flashing!
+- Enter C for Conbee, or R for RaspBee.
+- If flashing Conbee, then enter the number that corresponds to the Conbee device in the listing.
+- Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
+- If the device/number and file name look OK, type Y to start flashing!
+
+5. Restart your deCONZ container (`docker start [container name]` or `docker-compose up`).
+
+#### Firmware Flashing Script FAQ
+
+Q: Why does the script give an error about not being able to unload modules ftdi_sio and usbserial, or that the device couldn't be rest?
+
+A: In order to flash the device, no other program or device on the system can be using these kernel modules or the device. Stop any program/container that could be using the modules or device (likely deCONZ) and then invoke the script again. If the error persists, you may need to temporarily remove other USB serial devices from the system in order allow the script to completely unload the kernel modules.
 
 ### Gotchas / Known Issues
 

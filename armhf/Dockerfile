@@ -42,14 +42,15 @@ RUN dpkg -i /wiringpi.deb && \
 ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-armhf /tini
 COPY root /
 RUN chmod +x /tini && \
-    chmod +x /start.sh
+    chmod +x /start.sh && \
+    chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
 ADD https://www.dresden-elektronik.de/rpi/deconz/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
-    chown root:root /usr/bin/deCONZ
+    chown root:root /usr/bin/deCONZ*
 
 VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
