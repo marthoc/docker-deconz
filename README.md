@@ -8,7 +8,7 @@ Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures;
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
-Current deCONZ version: **2.05.15**
+Current deCONZ version: **2.05.16**
 
 ### Running the deCONZ Container
 
@@ -96,19 +96,49 @@ docker run -d \
 
 ### Configuring Raspbian for RaspBee
 
-By default, Raspbian configures a login shell over serial (tty); you must disable this and enable the serial port hardware to allow RaspBee to work.
+By default, Raspbian enables Bluetooth and configures a login shell over serial (tty); you must disable BT, disable the tty, and enable the serial port hardware to allow RaspBee to work properly under Docker.
 
 On a fresh install of Raspbian:
-1. `sudo raspi-config`
-2. Select `Interfacing Options`
-3. Select `Serial`
-4. “Would you like a login shell to be accessible over serial?” Select `No`
-5. “Would you like the serial port hardware to be enabled?” Select `Yes`
-6. Exit raspi-config and reboot
+1. `echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
+2. `sudo raspi-config`
+3. Select `Interfacing Options`
+4. Select `Serial`
+5. “Would you like a login shell to be accessible over serial?” Select `No`
+6. “Would you like the serial port hardware to be enabled?” Select `Yes`
+7. Exit raspi-config and reboot
+
+### Updating Conbee/RaspBee Firmware
+
+Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch. To use it, follow the below instructions:
+
+1. Check your deCONZ container logs for the update firmware file name: type `docker logs [container name]`, and look for lines near the beginning of the log that look like this, noting the .CGF file name listed (you'll need this later):
+```
+GW update firmware found: /usr/share/deCONZ/firmware/deCONZ_Rpi_0x261e0500.bin.GCF
+GW firmware version: 0x261c0500
+GW firmware version shall be updated to: 0x261e0500
+```
+
+2. `docker stop [container name]` or `docker-compose down` to stop your running deCONZ container (you must do this or the firmware update will fail).
+
+3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
+
+4. Follow the prompts:
+- Enter C for Conbee, or R for RaspBee.
+- If flashing Conbee, then enter the number that corresponds to the Conbee device in the listing.
+- Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
+- If the device/number and file name look OK, type Y to start flashing!
+
+5. Restart your deCONZ container (`docker start [container name]` or `docker-compose up`).
+
+#### Firmware Flashing Script FAQ
+
+Q: Why does the script give an error about not being able to unload modules ftdi_sio and usbserial, or that the device couldn't be rest?
+
+A: In order to flash the device, no other program or device on the system can be using these kernel modules or the device. Stop any program/container that could be using the modules or device (likely deCONZ) and then invoke the script again. If the error persists, you may need to temporarily remove other USB serial devices from the system in order allow the script to completely unload the kernel modules.
 
 ### Gotchas / Known Issues
 
-Firmware updates from the web UI do not work (they will fail silently and the USB device will stay at its current firmware level).
+Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
 
 Over-the-air update functionality is currently untested.
 

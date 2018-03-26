@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo "[marthoc/deconz] Starting deCONZ..."
+echo "[marthoc/deconz] Current deCONZ version: $DECONZ_VERSION"
 echo "[marthoc/deconz] Web UI port: $DECONZ_WEB_PORT"
 echo "[marthoc/deconz] Websockets port: $DECONZ_WS_PORT"
 

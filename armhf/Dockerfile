@@ -2,7 +2,7 @@ FROM resin/armv7hf-debian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.17.0 \
-    DECONZ_VERSION=2.05.15 \
+    DECONZ_VERSION=2.05.16 \
     WIRINGPI_VERSION="2.44+1"
 
 # Runtime environment variables
@@ -17,7 +17,9 @@ ENV DECONZ_WEB_PORT=80 \
 # Install deCONZ dependencies (except for WiringPi)
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         jq \
+        kmod \
         libcap2-bin \
         libqt5core5a \
         libqt5gui5 \
@@ -26,7 +28,8 @@ RUN apt-get update && \
         libqt5sql5 \
         libqt5websockets5 \
         libqt5widgets5 \
-        sqlite3 && \
+        sqlite3 \
+        wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -39,14 +42,15 @@ RUN dpkg -i /wiringpi.deb && \
 ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-armhf /tini
 COPY root /
 RUN chmod +x /tini && \
-    chmod +x /start.sh
+    chmod +x /start.sh && \
+    chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
 ADD https://www.dresden-elektronik.de/rpi/deconz/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
-    chown root:root /usr/bin/deCONZ
+    chown root:root /usr/bin/deCONZ*
 
 VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
