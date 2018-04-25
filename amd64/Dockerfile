@@ -2,7 +2,7 @@ FROM debian:stretch-slim
 
 # Build environment variables
 ENV TINI_VERSION=0.17.0 \
-    DECONZ_VERSION=2.05.20
+    DECONZ_VERSION=2.05.23
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
