@@ -19,6 +19,12 @@ script:
   - docker build -t "marthoc/deconz:armhf" ./armhf
 # Build armhf Hass.io addon
   - docker build -t "marthoc/hassio-addon-deconz-armhf" ./armhf-hassio-addon
+# Build aarch64
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker build -t "marthoc/deconz:aarch64" ./aarch64
+# Build aarch64 Hass.io addon
+  - docker build -t "marthoc/hassio-addon-deconz-aarch64" ./aarch64-hassio-addon
+
 after_success:
 # Tag and push built images
   - >

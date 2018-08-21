@@ -1,4 +1,4 @@
-FROM resin/armv7hf-debian:stretch
+FROM resin/aarch64-debian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
@@ -40,7 +40,7 @@ RUN dpkg -i /wiringpi.deb && \
     rm -f /wiringpi.deb
 
 # Add tini, start.sh, and Conbee udev data; set execute permissions
-ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-armhf /tini
+ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-arm64 /tini
 COPY root /
 RUN chmod +x /tini && \
     chmod +x /start.sh && \
