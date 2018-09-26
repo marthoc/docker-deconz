@@ -12,7 +12,8 @@ ENV DECONZ_WEB_PORT=80 \
     DEBUG_APS=0 \
     DEBUG_ZCL=0 \
     DEBUG_ZDP=0 \
-    DEBUG_OTAU=0
+    DEBUG_OTAU=0 \
+    DECONZ_DEVICE=0
 
 # Install deCONZ dependencies (except for WiringPi)
 RUN apt-get update && \
