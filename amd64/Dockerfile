@@ -2,7 +2,7 @@ FROM debian:stretch-slim
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.35
+    DECONZ_VERSION=2.05.39
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
@@ -11,7 +11,8 @@ ENV DECONZ_WEB_PORT=80 \
     DEBUG_APS=0 \
     DEBUG_ZCL=0 \
     DEBUG_ZDP=0 \
-    DEBUG_OTAU=0
+    DEBUG_OTAU=0 \
+    DECONZ_DEVICE=0
 
 # Install deCONZ dependencies
 RUN apt-get update && \

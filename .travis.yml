@@ -37,6 +37,10 @@ after_success:
       docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-armhf:$VERSION
       docker push marthoc/hassio-addon-deconz-armhf
       docker push marthoc/hassio-addon-deconz-armhf:$VERSION
+      docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-aarch64
+      docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-aarch64:$VERSION
+      docker push marthoc/hassio-addon-deconz-aarch64
+      docker push marthoc/hassio-addon-deconz-aarch64:$VERSION
     fi
 # Update repository manifest for multiarch marthoc/deconz:latest
   - >
