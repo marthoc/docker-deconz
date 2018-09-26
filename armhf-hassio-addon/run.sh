@@ -15,29 +15,17 @@ echo "[Hass.io] Starting deCONZ Hass.io Addon..."
 echo "[Hass.io] Current deCONZ version: $DECONZ_VERSION"
 echo "[Hass.io] Web UI port: $HASSIO_DECONZ_WEB_PORT"
 echo "[Hass.io] Websockets port: $HASSIO_DECONZ_WS_PORT"
+echo "[Hass.io] deCONZ device: $HASSIO_DECONZ_DEVICE"
 
-if [ -z "$HASSIO_DECONZ_DEVICE" ]; then
-    /usr/bin/deCONZ \
-        -platform minimal \
-        --auto-connect=1 \
-        --dbg-info=$HASSIO_DEBUG_INFO \
-        --dbg-aps=$HASSIO_DEBUG_APS \
-        --dbg-zcl=$HASSIO_DEBUG_ZCL \
-        --dbg-zdp=$HASSIO_DEBUG_ZDP \
-        --dbg-otau=$HASSIO_DEBUG_OTAU \
-        --http-port=$HASSIO_DECONZ_WEB_PORT \
-        --ws-port=$HASSIO_DECONZ_WS_PORT
-else
-    echo "[Hass.io] deCONZ device: $HASSIO_DECONZ_DEVICE"
-    /usr/bin/deCONZ \
-        -platform minimal \
-        --auto-connect=1 \
-        --dbg-info=$HASSIO_DEBUG_INFO \
-        --dbg-aps=$HASSIO_DEBUG_APS \
-        --dbg-zcl=$HASSIO_DEBUG_ZCL \
-        --dbg-zdp=$HASSIO_DEBUG_ZDP \
-        --dbg-otau=$HASSIO_DEBUG_OTAU \
-        --http-port=$HASSIO_DECONZ_WEB_PORT \
-        --ws-port=$HASSIO_DECONZ_WS_PORT \
-        --dev=$HASSIO_DECONZ_DEVICE
-fi
+/usr/bin/deCONZ \
+    -platform minimal \
+    --auto-connect=1 \
+    --dbg-info=$HASSIO_DEBUG_INFO \
+    --dbg-aps=$HASSIO_DEBUG_APS \
+    --dbg-zcl=$HASSIO_DEBUG_ZCL \
+    --dbg-zdp=$HASSIO_DEBUG_ZDP \
+    --dbg-otau=$HASSIO_DEBUG_OTAU \
+    --http-port=$HASSIO_DECONZ_WEB_PORT \
+    --ws-port=$HASSIO_DECONZ_WS_PORT \
+    --dev=$HASSIO_DECONZ_DEVICE
+    
