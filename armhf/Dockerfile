@@ -2,7 +2,7 @@ FROM resin/armv7hf-debian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.39 \
+    DECONZ_VERSION=2.05.42 \
     WIRINGPI_VERSION="2.44+1"
 
 # Runtime environment variables
