@@ -19,7 +19,7 @@ docker run -d \
     --name=deconz \
     --net=host \
     --restart=always \
-    --/etc/localtime:/etc/localtime:ro \
+    -v /etc/localtime:/etc/localtime:ro \
     -v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ \
     --device=/dev/ttyUSB0 \
     marthoc/deconz
