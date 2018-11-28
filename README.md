@@ -8,7 +8,7 @@ Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures;
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
-Current deCONZ version: **2.05.47**
+Current deCONZ version: **2.05.49**
 
 ### Running the deCONZ Container
 
@@ -27,31 +27,31 @@ docker run -d \
 
 #### Command line Options
 
-|Parameter|Description|
-|---------|-----------|
-|`--name=deconz`|Names the container "deconz".|
-|`--net=host`|Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below.|
-|`--restart=always`|Start the container when Docker starts (i.e. on boot/reboot).|
-|`-v /etc/localtime:/etc/localtime:ro`|Ensure the container has the correct local time (alternatively, use the TZ environment variable, see below).|
-|`-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`|Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.|
-|`--device=/dev/ttyUSB0`|Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ (if using RaspBee, use /dev/ttyAMA0).|
-|`marthoc/deconz`|This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.|
+| Parameter                                                     | Description                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--name=deconz`                                               | Names the container "deconz".                                                                                                                                                                                                                                                                                                       |
+| `--net=host`                                                  | Uses host networking mode for proper uPNP functionality; by default, the web UIs and REST API listen on port 80 and the websockets service listens on port 443. If these ports conflict with other services on your host, you can change them through the environment variables DECONZ_WEB_PORT and DECONZ_WS_PORT described below. |
+| `--restart=always`                                            | Start the container when Docker starts (i.e. on boot/reboot).                                                                                                                                                                                                                                                                       |
+| `-v /etc/localtime:/etc/localtime:ro`                         | Ensure the container has the correct local time (alternatively, use the TZ environment variable, see below).                                                                                                                                                                                                                        |
+| `-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ` | Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.                                                                                                                                                                                                                                 |
+| `--device=/dev/ttyUSB0`                                       | Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ (if using RaspBee, use /dev/ttyAMA0).                                                                                                                                                                                             |
+| `marthoc/deconz`                                              | This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.                                                                                                                                                                          |
 
 #### Environment Variables
 
 Use these environment variables to change the default behaviour of the container.
 
-|Parameter|Description|
-|---------|-----------|
-|`-e DECONZ_WEB_PORT=8080`|By default, the web UIs ("Wireless Light Control" and "Phoscon") and the REST API listen on port 80; only set this environment variable if you wish to change the listen port.|
-|`-e DECONZ_WS_PORT=8443`|By default, the websockets service listens on port 443; only set this environment variable if you wish to change the listen port.|
-|`-e DEBUG_INFO=1`|Sets the level of the deCONZ command-line flag --dbg-info (default 1).|
-|`-e DEBUG_APS=0`|Sets the level of the deCONZ command-line flag --dbg-aps (default 0).|
-|`-e DEBUG_ZCL=0`|Sets the level of the deCONZ command-line flag --dbg-zcl (default 0).|
-|`-e DEBUG_ZDP=0`|Sets the level of the deCONZ command-line flag --dbg-zdp (default 0).|
-|`-e DEBUG_OTAU=0`|Sets the level of the deCONZ command-line flag --dbg-otau (default 0).|
-|`-e DECONZ_DEVICE=/dev/ttyUSB1`|By default, deCONZ searches for RaspBee at /dev/ttyAMA0 and Conbee at /dev/ttyUSB0; when using other USB devices (e.g. a Z-Wave stick) deCONZ may not find RaspBee/Conbee properly. Set this environment variable to the same string passed to --device to force deCONZ to use the specific USB device.|
-|`-e TZ=America/Toronto`|Set the local time zone so deCONZ has the correct time.|
+| Parameter                       | Description                                                                                                                                                                                                                                                                                             |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-e DECONZ_WEB_PORT=8080`       | By default, the web UIs ("Wireless Light Control" and "Phoscon") and the REST API listen on port 80; only set this environment variable if you wish to change the listen port.                                                                                                                          |
+| `-e DECONZ_WS_PORT=8443`        | By default, the websockets service listens on port 443; only set this environment variable if you wish to change the listen port.                                                                                                                                                                       |
+| `-e DEBUG_INFO=1`               | Sets the level of the deCONZ command-line flag --dbg-info (default 1).                                                                                                                                                                                                                                  |
+| `-e DEBUG_APS=0`                | Sets the level of the deCONZ command-line flag --dbg-aps (default 0).                                                                                                                                                                                                                                   |
+| `-e DEBUG_ZCL=0`                | Sets the level of the deCONZ command-line flag --dbg-zcl (default 0).                                                                                                                                                                                                                                   |
+| `-e DEBUG_ZDP=0`                | Sets the level of the deCONZ command-line flag --dbg-zdp (default 0).                                                                                                                                                                                                                                   |
+| `-e DEBUG_OTAU=0`               | Sets the level of the deCONZ command-line flag --dbg-otau (default 0).                                                                                                                                                                                                                                  |
+| `-e DECONZ_DEVICE=/dev/ttyUSB1` | By default, deCONZ searches for RaspBee at /dev/ttyAMA0 and Conbee at /dev/ttyUSB0; when using other USB devices (e.g. a Z-Wave stick) deCONZ may not find RaspBee/Conbee properly. Set this environment variable to the same string passed to --device to force deCONZ to use the specific USB device. |
+| `-e TZ=America/Toronto`         | Set the local time zone so deCONZ has the correct time.                                                                                                                                                                                                                                                 |
 
 #### Docker-Compose
 
@@ -162,12 +162,12 @@ cd docker-deconz
 docker build -t "[your-user/]deconz[:local]" ./[arch]
 ```
 
-|Parameter|Description|
-|---------|-----------|
-|`[your-user/]`|Your username (optional).|
-|`deconz`|The name you want the built Docker image to have on your system (default: deconz).|
-|`[local]`|Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).|
-|`[arch]`|The architecture you want to build for (currently supported options: `amd64` and `armhf`).|
+| Parameter      | Description                                                                                                            |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `[your-user/]` | Your username (optional).                                                                                              |
+| `deconz`       | The name you want the built Docker image to have on your system (default: deconz).                                     |
+| `[local]`      | Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional). |
+| `[arch]`       | The architecture you want to build for (currently supported options: `amd64` and `armhf`).                             |
 
 ### Acknowledgments
 
