@@ -8,7 +8,7 @@ Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures;
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
-Current deCONZ version: **2.05.47**
+Current deCONZ version: **2.05.49**
 
 ### Running the deCONZ Container
 
@@ -19,7 +19,7 @@ docker run -d \
     --name=deconz \
     --net=host \
     --restart=always \
-    --/etc/localtime:/etc/localtime:ro \
+    -v /etc/localtime:/etc/localtime:ro \
     -v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ \
     --device=/dev/ttyUSB0 \
     marthoc/deconz
