@@ -2,7 +2,7 @@ FROM debian:stretch-slim
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.52
+    DECONZ_VERSION=2.05.54
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
@@ -28,6 +28,7 @@ RUN apt-get update && \
         libqt5sql5 \
         libqt5websockets5 \
         libqt5widgets5 \
+        lsof \
         sqlite3 \
         wget && \
     apt-get clean && \

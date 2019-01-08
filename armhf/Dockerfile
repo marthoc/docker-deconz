@@ -2,7 +2,7 @@ FROM resin/armv7hf-debian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.52 \
+    DECONZ_VERSION=2.05.54 \
     WIRINGPI_VERSION="2.44+1"
 
 # Runtime environment variables
@@ -29,6 +29,7 @@ RUN apt-get update && \
         libqt5sql5 \
         libqt5websockets5 \
         libqt5widgets5 \
+        lsof \
         sqlite3 \
         wget && \
     apt-get clean && \
