@@ -28,6 +28,9 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   echo "$DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /root/.vnc/passwd
   chmod 600 /root/.vnc/passwd
 
+  # cleanup previous session data
+  tigervncserver -kill "$DECONZ_VNC_DISPLAY"
+
   tigervncserver -SecurityTypes VncAuth,TLSVnc "$DECONZ_VNC_DISPLAY"
   export DISPLAY=$DECONZ_VNC_DISPLAY
 else

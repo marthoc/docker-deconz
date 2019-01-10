@@ -38,6 +38,9 @@ if [ "$HASSIO_DECONZ_VNC_MODE" == "true" ]; then
   echo "$HASSIO_DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /data/.vnc/passwd
   chmod 600 /data/.vnc/passwd
 
+  # cleanup previous session data
+  tigervncserver -kill "$DECONZ_VNC_DISPLAY"
+
   tigervncserver -SecurityTypes VncAuth,TLSVnc $HASSIO_DECONZ_VNC_DISPLAY
   export DISPLAY=$HASSIO_DECONZ_VNC_DISPLAY
 else
