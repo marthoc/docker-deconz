@@ -30,7 +30,7 @@ echo "[Hass.io] Web UI port: $HASSIO_DECONZ_WEB_PORT"
 echo "[Hass.io] Websockets port: $HASSIO_DECONZ_WS_PORT"
 echo "[Hass.io] deCONZ device: $HASSIO_DECONZ_DEVICE"
 
-if [ "$HASSIO_DECONZ_VNC_MODE" == "true" ]; then
+if [ "$HASSIO_DECONZ_VNC_MODE" = "true" ]; then
   echo "[Hass.io] Starting VNC Server on Port $HASSIO_DECONZ_VNC_PORT"
   if [ ! -e /data/.vnc ]; then
   	mkdir /data/.vnc
