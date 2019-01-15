@@ -2,7 +2,7 @@ FROM resin/armv7hf-debian:stretch
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.54 \
+    DECONZ_VERSION=2.05.55 \
     WIRINGPI_VERSION="2.44+1"
 
 # Runtime environment variables
@@ -13,7 +13,11 @@ ENV DECONZ_WEB_PORT=80 \
     DEBUG_ZCL=0 \
     DEBUG_ZDP=0 \
     DEBUG_OTAU=0 \
-    DECONZ_DEVICE=0
+    DECONZ_DEVICE=0 \
+    DECONZ_VNC_MODE=0 \
+    DECONZ_VNC_DISPLAY=0 \
+    DECONZ_VNC_PASSWORD=changeme \
+    DECONZ_VNC_PORT=5900
 
 # Install deCONZ dependencies (except for WiringPi)
 RUN apt-get update && \
@@ -31,6 +35,11 @@ RUN apt-get update && \
         libqt5widgets5 \
         lsof \
         sqlite3 \
+        tigervnc-standalone-server \
+        tigervnc-common \
+        wmii \
+        xfonts-base \
+        xfonts-scalable \
         wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -56,6 +65,6 @@ RUN dpkg -i /deconz.deb && \
 
 VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
-EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT}
+EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
 
 ENTRYPOINT [ "/tini", "--", "/start.sh" ]
