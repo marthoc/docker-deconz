@@ -22,7 +22,8 @@ DECONZ_OPTS="--auto-connect=1 \
         --dbg-zdp=$HASSIO_DEBUG_ZDP \
         --dbg-otau=$HASSIO_DEBUG_OTAU \
         --http-port=$HASSIO_DECONZ_WEB_PORT \
-        --ws-port=$HASSIO_DECONZ_WS_PORT"
+        --ws-port=$HASSIO_DECONZ_WS_PORT \
+        --dev=$HASSIO_DECONZ_DEVICE"
 
 echo "[Hass.io] Starting deCONZ Hass.io Addon..."
 echo "[Hass.io] Current deCONZ version: $DECONZ_VERSION"
