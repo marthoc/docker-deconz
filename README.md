@@ -114,6 +114,22 @@ On a fresh install of Raspbian:
 6. “Would you like the serial port hardware to be enabled?” Select `Yes`
 7. Exit raspi-config and reboot
 
+If you don't want to disable BT, you can try this configuration, that is reported to work:
+
+```bash
+docker run -d \
+    --name=deconz \
+    -p 80:80 \
+    -p 443:443 \
+    --restart=always \
+    -v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ \
+    --device=/dev/ttyS0 \
+    -e DECONZ_WEB_PORT=80 \
+    -e DECONZ_WS_PORT=443 \
+    -e DECONZ_DEVICE=/dev/ttyS0 \
+    marthoc/deconz
+```
+
 ### Updating Conbee/RaspBee Firmware
 
 Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch. To use it, follow the below instructions:
