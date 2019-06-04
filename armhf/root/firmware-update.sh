@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.3
+VERSION=0.4
 
 echo "-------------------------------------------------------------------"
 echo " "
@@ -20,9 +20,9 @@ if [ "$device" = "C" ] || [ "$device" = "c" ]; then
         /usr/bin/GCFFlasher_internal -l
 
         echo " "
-        echo "Enter the Conbee device number, or press Enter now to exit."
+        echo "Enter the full Conbee device path, or press Enter now to exit."
         echo " "
-        read -p "Device Number : " deviceNum
+        read -p "Device Path : " deviceNum
 
         if [[ -z "${deviceNum// }" ]]; then
                 echo "Exiting..."
@@ -88,7 +88,7 @@ echo " "
 if [ "$device" = "R" ] || [ "$device" = "r" ]; then
         echo "Device: RaspBee"
 else 
-        echo "Conbee Device Number: $deviceNum"
+        echo "Conbee Device: $deviceNum"
 fi
 
 echo " "

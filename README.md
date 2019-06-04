@@ -2,15 +2,23 @@
 
 [![Build Status](https://travis-ci.org/marthoc/docker-deconz.svg?branch=master)](https://travis-ci.org/marthoc/docker-deconz)
 
-This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets.
+This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets, and optionally runs a VNC server for viewing and interacting with the ZigBee mesh through the deCONZ UI.
 
-Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3) architectures; RaspBee is supported on `armhf` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
+Conbee is supported on `amd64`, `armhf`, and `arm64` (i.e. RaspberryPi 2/3B/3B+) architectures; RaspBee is supported on `armhf` and `arm64` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
 Current deCONZ version: **2.05.65**
 
 ### Running the deCONZ Container
+
+#### Pre-requisite
+
+Before running the command that creates the deconz Docker container, you may need to add your Linux user to the `dialout` group, which allows the user access to serial devices (i.e. Conbee/Conbee II/RaspBee):
+
+```bash
+sudo usermod -a -G dialout $USER
+```
 
 #### Command Line
 
@@ -34,7 +42,7 @@ docker run -d \
 |`--restart=always`|Start the container when Docker starts (i.e. on boot/reboot).|
 |`-v /etc/localtime:/etc/localtime:ro`|Ensure the container has the correct local time (alternatively, use the TZ environment variable, see below).|
 |`-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`|Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.|
-|`--device=/dev/ttyUSB0`|Pass the serial device at ttyUSB0 (i.e. a Conbee USB device) into the container for use by deCONZ (if using RaspBee, use /dev/ttyAMA0).|
+|`--device=/dev/ttyUSB0`|Pass the serial device at ttyUSB0 into the container for use by deCONZ (you may need to investigate which device name is assigned to your device depending on if you are also using other usb serial devices; by default ConBee = /dev/ttyUSB0, Conbee II = /dev/ttyACM0, RaspBee = /dev/ttyAMA0 or /dev/ttyS0).|
 |`marthoc/deconz`|This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.|
 
 #### Environment Variables
@@ -103,16 +111,24 @@ docker run -d \
 
 ### Configuring Raspbian for RaspBee
 
-By default, Raspbian enables Bluetooth and configures a login shell over serial (tty); you must disable BT, disable the tty, and enable the serial port hardware to allow RaspBee to work properly under Docker.
+By default, Raspbian enables Bluetooth and configures a login shell over serial (tty). You may need to disable the tty and enable the serial port hardware, and possibly disable Bluetooth, to allow RaspBee to work properly under Docker.
 
-On a fresh install of Raspbian:
-1. `echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
-2. `sudo raspi-config`
-3. Select `Interfacing Options`
-4. Select `Serial`
-5. “Would you like a login shell to be accessible over serial?” Select `No`
-6. “Would you like the serial port hardware to be enabled?” Select `Yes`
-7. Exit raspi-config and reboot
+To disable the login shell over serial and enable the serial port hardware:
+
+1. `sudo raspi-config`
+2. Select `Interfacing Options`
+3. Select `Serial`
+4. “Would you like a login shell to be accessible over serial?” Select `No`
+5. “Would you like the serial port hardware to be enabled?” Select `Yes`
+6. Exit raspi-config and reboot
+
+To disable Bluetooth, run the following command and then reboot:
+
+```bash
+`echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
+```
+
+Without disabling Bluetooth, RaspBee should be available at /dev/ttyS0; after running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
 
 ### Updating Conbee/RaspBee Firmware
 
@@ -131,9 +147,9 @@ GW firmware version shall be updated to: 0x261e0500
 
 4. Follow the prompts:
 - Enter C for Conbee, or R for RaspBee.
-- If flashing Conbee, then enter the number that corresponds to the Conbee device in the listing.
+- If flashing Conbee, then enter the path (e.g. `/dev/ttyUSB0`) that corresponds to the Conbee device in the listing.
 - Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
-- If the device/number and file name look OK, type Y to start flashing!
+- If the device/path and file name look OK, type Y to start flashing!
 
 5. Restart your deCONZ container (`docker start [container name]` or `docker-compose up`).
 
@@ -143,13 +159,15 @@ Q: Why does the script give an error about not being able to unload modules ftdi
 
 A: In order to flash the device, no other program or device on the system can be using these kernel modules or the device. Stop any program/container that could be using the modules or device (likely deCONZ) and then invoke the script again. If the error persists, you may need to temporarily remove other USB serial devices from the system in order allow the script to completely unload the kernel modules.
 
-#### Viewing the deCONZ ZigBee mesh
+### Viewing the deCONZ ZigBee mesh with VNC
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900, port must be 5900 or larger); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
 ### Gotchas / Known Issues
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
+
+If you are NOT using host networking (i.e. `--net=host`), and wish to change the websocket port, make sure that both "ends" of the port directive (i.e. `-p`) are changed to match the port specified in the `DECONZ_WS_PORT` environment variable (otherwise, the websocket will not connect resulting in possibly no updating of lights, switches and sensors). For example, if you wish to change the websocket port to 4443, you must specify BOTH `-e DECONZ_WS_PORT=4443` AND `-p 4443:4443` in your `docker run` command.
 
 Over-the-air update functionality is currently untested.
 
