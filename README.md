@@ -167,6 +167,8 @@ Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in th
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
 
+If you decide to change the websocket port `DECONZ_WS_PORT=443` make sure that "both ends" of the docker follows, if not the websocket in the GUI will not connect resulting in possibly no updating of lights, switches and sensors. For example if using docker (not compose) use `-v 4434:4434` if you want to use the 4434 port. `-v 4434:443` will not work.
+
 Over-the-air update functionality is currently untested.
 
 ### Issues / Contributing
