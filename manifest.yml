@@ -11,3 +11,8 @@ manifests:
       architecture: arm
       variant: armv7l
       os: linux
+  -
+    image: marthoc/deconz:armhf
+    platform:
+      architecture: arm64
+      os: linux
