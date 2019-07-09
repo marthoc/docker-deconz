@@ -23,7 +23,6 @@ ENV DECONZ_WEB_PORT=80 \
 RUN apt-get update && \
     apt-get install -y \
         curl \
-        jq \
         kmod \
         libcap2-bin \
         libqt5core5a \
@@ -39,8 +38,7 @@ RUN apt-get update && \
         tigervnc-common \
         wmii \
         xfonts-base \
-        xfonts-scalable \
-        wget && \
+        xfonts-scalable && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
