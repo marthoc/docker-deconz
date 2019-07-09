@@ -21,6 +21,7 @@ ENV DECONZ_WEB_PORT=80 \
 # Install deCONZ dependencies
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         kmod \
         libcap2-bin \
         libqt5core5a \
