@@ -146,8 +146,7 @@ GW firmware version shall be updated to: 0x261e0500
 3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
 
 4. Follow the prompts:
-- Enter C for Conbee, or R for RaspBee.
-- If flashing Conbee, then enter the path (e.g. `/dev/ttyUSB0`) that corresponds to the Conbee device in the listing.
+- Enter the path (e.g. `/dev/ttyUSB0`) that corresponds to your device in the listing.
 - Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
 - If the device/path and file name look OK, type Y to start flashing!
 
