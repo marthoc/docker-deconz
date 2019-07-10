@@ -15,6 +15,9 @@ script:
 # Build armhf
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - docker build -t "marthoc/deconz:armhf" ./armhf
+# Build aarch64
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker build -t "marthoc/deconz:aarch64" ./aarch64
 after_success:
 # Tag and push built images
   - >
@@ -28,6 +31,9 @@ after_success:
       docker push marthoc/deconz:armhf
       docker push marthoc/deconz:armhf-$VERSION
     fi
+  - docker tag marthoc/deconz:aarch64 marthoc/deconz:aarch64-$VERSION
+  - docker push marthoc/deconz:aarch64
+  - docker push marthoc/deconz:aarch64-$VERSION
 # Update repository manifest for multiarch marthoc/deconz:latest
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
