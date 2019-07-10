@@ -111,7 +111,7 @@ docker run -d \
 
 ### Configuring Raspbian for RaspBee
 
-By default, Raspbian enables Bluetooth and configures a login shell over serial (tty). You may need to disable the tty and enable the serial port hardware, and possibly disable Bluetooth, to allow RaspBee to work properly under Docker.
+Raspbian defaults Bluetooth to /dev/ttyAMA0 and configures a login shell over serial (tty). You must disable the tty login shell and enable the serial port hardware, and swap Bluetooth to /dev/S0, to allow RaspBee to work properly under Docker.
 
 To disable the login shell over serial and enable the serial port hardware:
 
@@ -122,13 +122,13 @@ To disable the login shell over serial and enable the serial port hardware:
 5. “Would you like the serial port hardware to be enabled?” Select `Yes`
 6. Exit raspi-config and reboot
 
-To disable Bluetooth, run the following command and then reboot:
+To swap Bluetooth to /dev/S0 (moving RaspBee to /dev/ttyAMA0), run the following command and then reboot:
 
 ```bash
-`echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
+`echo 'dtoverlay=pi3-miniuart-bt' | sudo tee -a /boot/config.txt`
 ```
 
-Without disabling Bluetooth, RaspBee should be available at /dev/ttyS0; after running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
+After running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
 
 ### Updating Conbee/RaspBee Firmware
 
