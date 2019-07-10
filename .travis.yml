@@ -31,9 +31,12 @@ after_success:
       docker push marthoc/deconz:armhf
       docker push marthoc/deconz:armhf-$VERSION
     fi
+  - docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
+  - VERSION=$(cat .VERSION)
   - docker tag marthoc/deconz:aarch64 marthoc/deconz:aarch64-$VERSION
   - docker push marthoc/deconz:aarch64
   - docker push marthoc/deconz:aarch64-$VERSION
+  - ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-spec manifest.yml
 # Update repository manifest for multiarch marthoc/deconz:latest
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
