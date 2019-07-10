@@ -4,7 +4,7 @@
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets, and optionally runs a VNC server for viewing and interacting with the ZigBee mesh through the deCONZ UI.
 
-Conbee is supported on `amd64`, `armhf`, and `arm64` (i.e. RaspberryPi 2/3B/3B+) architectures; RaspBee is supported on `armhf` and `arm64` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
+Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3B/3B+) architectures; RaspBee is supported on `armhf` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
@@ -111,7 +111,7 @@ docker run -d \
 
 ### Configuring Raspbian for RaspBee
 
-By default, Raspbian enables Bluetooth and configures a login shell over serial (tty). You may need to disable the tty and enable the serial port hardware, and possibly disable Bluetooth, to allow RaspBee to work properly under Docker.
+Raspbian defaults Bluetooth to /dev/ttyAMA0 and configures a login shell over serial (tty). You must disable the tty login shell and enable the serial port hardware, and swap Bluetooth to /dev/S0, to allow RaspBee to work properly under Docker.
 
 To disable the login shell over serial and enable the serial port hardware:
 
@@ -122,13 +122,13 @@ To disable the login shell over serial and enable the serial port hardware:
 5. “Would you like the serial port hardware to be enabled?” Select `Yes`
 6. Exit raspi-config and reboot
 
-To disable Bluetooth, run the following command and then reboot:
+To swap Bluetooth to /dev/S0 (moving RaspBee to /dev/ttyAMA0), run the following command and then reboot:
 
 ```bash
-`echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
+`echo 'dtoverlay=pi3-miniuart-bt' | sudo tee -a /boot/config.txt`
 ```
 
-Without disabling Bluetooth, RaspBee should be available at /dev/ttyS0; after running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
+After running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
 
 ### Updating Conbee/RaspBee Firmware
 
@@ -160,7 +160,7 @@ A: In order to flash the device, no other program or device on the system can be
 
 ### Viewing the deCONZ ZigBee mesh with VNC
 
-Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900, port must be 5900 or larger); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
+Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
 ### Gotchas / Known Issues
 
