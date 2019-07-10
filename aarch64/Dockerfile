@@ -49,7 +49,7 @@ RUN chmod +x /tini && \
     chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
-ADD hhttps://www.dresden-elektronik.de/rpi/deconz/alpha/deconz_${DECONZ_VERSION}-debian-stretch-beta_arm64.deb /deconz.deb
+ADD https://www.dresden-elektronik.de/rpi/deconz/alpha/deconz_${DECONZ_VERSION}-debian-stretch-beta_arm64.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
