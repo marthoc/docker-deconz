@@ -1,34 +1,27 @@
 #!/bin/bash
 
-VERSION=0.4
+VERSION=0.5
 
 echo "-------------------------------------------------------------------"
 echo " "
-echo "       marthoc/deconz Conbee/RaspBee Firmware Flashing Script"
+echo "             marthoc/deconz Firmware Flashing Script"
 echo " "
 echo "                       Version: $VERSION"
 echo " "
 echo "-------------------------------------------------------------------"
 echo " "
-read -p "Enter C for Conbee, R for RaspBee, or press Enter now to exit: " device
+echo " "
+echo "Listing attached devices..."
+echo " "
 
-if [ "$device" = "C" ] || [ "$device" = "c" ]; then
-        echo " "
-        echo "Listing attached devices..."
-        echo " "
+/usr/bin/GCFFlasher_internal -l
 
-        /usr/bin/GCFFlasher_internal -l
+echo " "
+echo "Enter the full device path, or press Enter now to exit."
+echo " "
+read -p "Device Path : " deviceName
 
-        echo " "
-        echo "Enter the full Conbee device path, or press Enter now to exit."
-        echo " "
-        read -p "Device Path : " deviceNum
-
-        if [[ -z "${deviceNum// }" ]]; then
-                echo "Exiting..."
-                exit 1
-        fi
-elif [[ -z "${device// }" ]]; then
+if [[ -z "${deviceName// }" ]]; then
         echo "Exiting..."
         exit 1
 fi
@@ -40,7 +33,6 @@ echo "Firmware available for flashing:"
 echo " "
 
 ls -1 /usr/share/deCONZ/firmware
-#curl -s https://www.dresden-elektronik.de/rpi/deconz-firmware/ | grep deCONZ_Rpi_ | cut -d \> -f 7 | sed "s/...$//g" | grep -v .md5 | sort
 
 echo " "
 echo "Enter the firmware file name from above, including extension,"
@@ -52,45 +44,11 @@ echo " "
 if [[ -z "${fileName// }" ]]; then
         echo "Exiting..."
         exit 1
-        fi
-
-#echo " "
-#echo "Downloading firmware file and MD5 signature..."
-#echo " "
-#echo "------------------------------------------------------------"
-
-#wget -O /$fileName http://dresden-elektronik.de/rpi/deconz-firmware/$fileName
-#wget -O /$fileName.md5 http://dresden-elektronik.de/rpi/deconz-firmware/$fileName.md5
-
-#echo "------------------------------------------------------------"
-#echo " "
-#echo "Comparing firmware file with MD5 signature..."
-#echo " "
-
-#cd /
-#md5sum -c $fileName.md5
-#retVal=$?
-
-#if [ $retVal != 0 ]; then
-#        echo " "
-#        echo "MD5 mismatch! Exiting..."
-#        echo " "
-#        exit 1
-#else
-#        echo " "
-#        echo "MD5 match!"
-#        echo " "
-#fi
+fi
 
 echo "-------------------------------------------------------------------"
 echo " "
-
-if [ "$device" = "R" ] || [ "$device" = "r" ]; then
-        echo "Device: RaspBee"
-else 
-        echo "Conbee Device: $deviceNum"
-fi
-
+echo "Device: $deviceName"
 echo " "
 echo "Firmware File: $fileName"
 echo " "
@@ -101,11 +59,7 @@ if [ "$correctVal" = "Y" ] || [ "$correctVal" = "y" ]; then
         echo " "
         echo "Flashing..."
         echo " "
-        if [ "$device" = "C" ] || [ "$device" = "c" ]; then
-        /usr/bin/GCFFlasher_internal -d $deviceNum -f /usr/share/deCONZ/firmware/$fileName
-        elif [ "$device" = "R" ] || [ "$device" = "r" ]; then
-        /usr/bin/GCFFlasher_internal -f /usr/share/deCONZ/firmware/$fileName
-        fi
+        /usr/bin/GCFFlasher_internal -d $deviceName -f /usr/share/deCONZ/firmware/$fileName
         
         retVal=$?
         if [ $retVal != 0 ]; then

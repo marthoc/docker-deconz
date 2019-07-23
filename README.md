@@ -4,7 +4,7 @@
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets, and optionally runs a VNC server for viewing and interacting with the ZigBee mesh through the deCONZ UI.
 
-Conbee is supported on `amd64`, `armhf`, and `arm64` (i.e. RaspberryPi 2/3B/3B+) architectures; RaspBee is supported on `armhf` and `arm64` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
+Conbee is supported on `amd64`, `armhf`, and `aarch64` (i.e. RaspberryPi 2/3B/3B+, and other arm64 boards) architectures; RaspBee is supported on `armhf` and `aarch64` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
@@ -61,8 +61,9 @@ Use these environment variables to change the default behaviour of the container
 |`-e DECONZ_DEVICE=/dev/ttyUSB1`|By default, deCONZ searches for RaspBee at /dev/ttyAMA0 and Conbee at /dev/ttyUSB0; when using other USB devices (e.g. a Z-Wave stick) deCONZ may not find RaspBee/Conbee properly. Set this environment variable to the same string passed to --device to force deCONZ to use the specific USB device.|
 |`-e TZ=America/Toronto`|Set the local time zone so deCONZ has the correct time.|
 |`-e DECONZ_VNC_MODE=1`|Set this option to enable VNC access to the container to view the deCONZ ZigBee mesh|
-|`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port (but, must be larger than 5900)|
+|`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port|
 |`-e DECONZ_VNC_PASSWORD=changeme`|Default password for VNC mode is 'changeme'; this option can (should) be used to change the default password|
+|`-e DECONZ_UPNP=0`|Set this option to 0 to disable uPNP, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/274|
 
 #### Docker-Compose
 
@@ -111,7 +112,7 @@ docker run -d \
 
 ### Configuring Raspbian for RaspBee
 
-By default, Raspbian enables Bluetooth and configures a login shell over serial (tty). You may need to disable the tty and enable the serial port hardware, and possibly disable Bluetooth, to allow RaspBee to work properly under Docker.
+Raspbian defaults Bluetooth to /dev/ttyAMA0 and configures a login shell over serial (tty). You must disable the tty login shell and enable the serial port hardware, and swap Bluetooth to /dev/S0, to allow RaspBee to work properly under Docker.
 
 To disable the login shell over serial and enable the serial port hardware:
 
@@ -122,13 +123,13 @@ To disable the login shell over serial and enable the serial port hardware:
 5. “Would you like the serial port hardware to be enabled?” Select `Yes`
 6. Exit raspi-config and reboot
 
-To disable Bluetooth, run the following command and then reboot:
+To swap Bluetooth to /dev/S0 (moving RaspBee to /dev/ttyAMA0), run the following command and then reboot:
 
 ```bash
-`echo 'dtoverlay=pi3-disable-bt' | sudo tee -a /boot/config.txt`
+`echo 'dtoverlay=pi3-miniuart-bt' | sudo tee -a /boot/config.txt`
 ```
 
-Without disabling Bluetooth, RaspBee should be available at /dev/ttyS0; after running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
+After running the above command and rebooting, RaspBee should be available at /dev/ttyAMA0.
 
 ### Updating Conbee/RaspBee Firmware
 
@@ -146,8 +147,7 @@ GW firmware version shall be updated to: 0x261e0500
 3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
 
 4. Follow the prompts:
-- Enter C for Conbee, or R for RaspBee.
-- If flashing Conbee, then enter the path (e.g. `/dev/ttyUSB0`) that corresponds to the Conbee device in the listing.
+- Enter the path (e.g. `/dev/ttyUSB0`) that corresponds to your device in the listing.
 - Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
 - If the device/path and file name look OK, type Y to start flashing!
 
@@ -161,7 +161,7 @@ A: In order to flash the device, no other program or device on the system can be
 
 ### Viewing the deCONZ ZigBee mesh with VNC
 
-Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900, port must be 5900 or larger); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
+Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
 ### Gotchas / Known Issues
 
@@ -192,7 +192,7 @@ docker build -t "[your-user/]deconz[:local]" ./[arch]
 |`[your-user/]`|Your username (optional).|
 |`deconz`|The name you want the built Docker image to have on your system (default: deconz).|
 |`[local]`|Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).|
-|`[arch]`|The architecture you want to build for (currently supported options: `amd64` and `armhf`).|
+|`[arch]`|The architecture you want to build for (currently supported options: `amd64`, `armhf`, and `aarch64`).|
 
 ### Acknowledgments
 

@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM balenalib/amd64-debian:stretch-run
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
@@ -16,13 +16,13 @@ ENV DECONZ_WEB_PORT=80 \
     DECONZ_VNC_MODE=0 \
     DECONZ_VNC_DISPLAY=0 \
     DECONZ_VNC_PASSWORD=changeme \
-    DECONZ_VNC_PORT=5900
+    DECONZ_VNC_PORT=5900 \
+    DECONZ_UPNP=1
 
-# Install deCONZ dependencies (except for WiringPi)
+# Install deCONZ dependencies
 RUN apt-get update && \
     apt-get install -y \
         curl \
-        jq \
         kmod \
         libcap2-bin \
         libqt5core5a \
@@ -38,8 +38,7 @@ RUN apt-get update && \
         tigervnc-common \
         wmii \
         xfonts-base \
-        xfonts-scalable \
-        wget && \
+        xfonts-scalable && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

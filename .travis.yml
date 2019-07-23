@@ -12,15 +12,14 @@ install:
 script:
 # Build amd64
   - docker build -t "marthoc/deconz:amd64" ./amd64
-# Build amd64 Hass.io addon
-  - docker build -t "marthoc/hassio-addon-deconz-amd64" ./amd64-hassio-addon
 # Build armhf
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - docker build -t "marthoc/deconz:armhf" ./armhf
-# Build armhf Hass.io addon
-  - docker build -t "marthoc/hassio-addon-deconz-armhf" ./armhf-hassio-addon
+# Build aarch64
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker build -t "marthoc/deconz:aarch64" ./aarch64
 after_success:
-# Tag and push built images
+# Tag and push built images, update manifest for marthoc/deconz:latest
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
@@ -28,22 +27,12 @@ after_success:
       docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-$VERSION
       docker push marthoc/deconz:amd64
       docker push marthoc/deconz:amd64-$VERSION
-      docker tag marthoc/hassio-addon-deconz-amd64 marthoc/hassio-addon-deconz-amd64:$VERSION
-      docker push marthoc/hassio-addon-deconz-amd64
-      docker push marthoc/hassio-addon-deconz-amd64:$VERSION
       docker tag marthoc/deconz:armhf marthoc/deconz:armhf-$VERSION
       docker push marthoc/deconz:armhf
       docker push marthoc/deconz:armhf-$VERSION
-      docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-armhf:$VERSION
-      docker push marthoc/hassio-addon-deconz-armhf
-      docker push marthoc/hassio-addon-deconz-armhf:$VERSION
-      docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-aarch64
-      docker tag marthoc/hassio-addon-deconz-armhf marthoc/hassio-addon-deconz-aarch64:$VERSION
-      docker push marthoc/hassio-addon-deconz-aarch64
-      docker push marthoc/hassio-addon-deconz-aarch64:$VERSION
-    fi
-# Update repository manifest for multiarch marthoc/deconz:latest
-  - >
-    if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      docker tag marthoc/deconz:aarch64 marthoc/deconz:aarch64-$VERSION
+      docker push marthoc/deconz:aarch64
+      docker push marthoc/deconz:aarch64-$VERSION
       ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-spec manifest.yml
     fi
+    

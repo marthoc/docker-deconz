@@ -1,9 +1,8 @@
-FROM balenalib/armv7hf-debian:stretch-run
+FROM balenalib/aarch64-debian:stretch-run
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.66 \
-    WIRINGPI_VERSION="2.50"
+    DECONZ_VERSION=2.05.66
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
@@ -20,7 +19,7 @@ ENV DECONZ_WEB_PORT=80 \
     DECONZ_VNC_PORT=5900 \
     DECONZ_UPNP=1
 
-# Install deCONZ dependencies (except for WiringPi)
+# Install deCONZ dependencies
 RUN apt-get update && \
     apt-get install -y \
         curl \
@@ -43,20 +42,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Add WiringPi, install WiringPi
-ADD https://archive.raspberrypi.org/debian/pool/main/w/wiringpi/wiringpi_${WIRINGPI_VERSION}_armhf.deb /wiringpi.deb
-RUN dpkg -i /wiringpi.deb && \
-    rm -f /wiringpi.deb
-
 # Add tini, start.sh, and Conbee udev data; set execute permissions
-ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-armhf /tini
+ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-arm64 /tini
 COPY root /
 RUN chmod +x /tini && \
     chmod +x /start.sh && \
     chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
-ADD https://www.dresden-elektronik.de/rpi/deconz/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
+ADD https://www.dresden-elektronik.de/rpi/deconz/alpha/deconz_${DECONZ_VERSION}-debian-stretch-beta_arm64.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
