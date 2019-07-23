@@ -44,4 +44,8 @@ if [ "$DECONZ_DEVICE" != 0 ]; then
   DECONZ_OPTS="$DECONZ_OPTS --dev=$DECONZ_DEVICE"
 fi
 
+if [ "$DECONZ_UPNP" != 1 ]; then
+  DECONZ_OPTS="$DECONZ_OPTS --upnp=0"
+fi
+
 /usr/bin/deCONZ $DECONZ_OPTS

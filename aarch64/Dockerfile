@@ -16,7 +16,8 @@ ENV DECONZ_WEB_PORT=80 \
     DECONZ_VNC_MODE=0 \
     DECONZ_VNC_DISPLAY=0 \
     DECONZ_VNC_PASSWORD=changeme \
-    DECONZ_VNC_PORT=5900
+    DECONZ_VNC_PORT=5900 \
+    DECONZ_UPNP=1
 
 # Install deCONZ dependencies
 RUN apt-get update && \
