@@ -4,7 +4,7 @@
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets, and optionally runs a VNC server for viewing and interacting with the ZigBee mesh through the deCONZ UI.
 
-Conbee is supported on `amd64` and `armhf` (i.e. RaspberryPi 2/3B/3B+) architectures; RaspBee is supported on `armhf` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
+Conbee is supported on `amd64`, `armhf`, and `aarch64` (i.e. RaspberryPi 2/3B/3B+, and other arm64 boards) architectures; RaspBee is supported on `armhf` and `aarch64` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
 
 This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
 
@@ -191,7 +191,7 @@ docker build -t "[your-user/]deconz[:local]" ./[arch]
 |`[your-user/]`|Your username (optional).|
 |`deconz`|The name you want the built Docker image to have on your system (default: deconz).|
 |`[local]`|Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).|
-|`[arch]`|The architecture you want to build for (currently supported options: `amd64` and `armhf`).|
+|`[arch]`|The architecture you want to build for (currently supported options: `amd64`, `armhf`, and `aarch64`).|
 
 ### Acknowledgments
 
