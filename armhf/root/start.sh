@@ -15,8 +15,13 @@ DECONZ_OPTS="--auto-connect=1 \
         --ws-port=$DECONZ_WS_PORT"
 
 if [ "$DECONZ_VNC_MODE" != 0 ]; then
+  
+  if [ "$DECONZ_VNC_PORT" -lt 5900 ]; then
+    echo "[marthoc/deconz] ERROR - VNC port must be 5900 or greater!"
+    exit 1
+  fi
 
-  DECONZ_VNC_DISPLAY=:0
+  DECONZ_VNC_DISPLAY=:$(($DECONZ_VNC_PORT - 5900))
   echo "[marthoc/deconz] VNC port: $DECONZ_VNC_PORT"
   
   if [ ! -e /root/.vnc ]; then
