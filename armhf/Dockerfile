@@ -2,8 +2,7 @@ FROM balenalib/armv7hf-debian:stretch-run
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.67 \
-    WIRINGPI_VERSION="2.50"
+    DECONZ_VERSION=2.05.67
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
@@ -44,7 +43,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Add WiringPi, install WiringPi
-ADD https://archive.raspberrypi.org/debian/pool/main/w/wiringpi/wiringpi_${WIRINGPI_VERSION}_armhf.deb /wiringpi.deb
+ADD https://project-downloads.drogon.net/wiringpi-latest.deb /wiringpi.deb
 RUN dpkg -i /wiringpi.deb && \
     rm -f /wiringpi.deb
 
