@@ -1,4 +1,4 @@
-FROM balenalib/amd64-debian:stretch-run
+FROM balenalib/amd64-debian:buster-run
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
