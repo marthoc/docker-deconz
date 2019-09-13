@@ -1,4 +1,4 @@
-FROM balenalib/armv7hf-debian:stretch-run
+FROM balenalib/armv7hf-debian:buster-run
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
