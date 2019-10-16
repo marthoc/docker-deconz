@@ -163,13 +163,36 @@ A: In order to flash the device, no other program or device on the system can be
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
+To access the Deconz VNC server please use a VNC client (vncviewer). For Windows/Linux we recommend "TigerVNC", download the viewer here: https://bintray.com/tigervnc/stable/tigervnc
+Open the vncviwer app and point it to the address of your deconz server with the corresponding port and enter the password.
+
+### OTAU - Over-The-Air-Updates of Zigbee devices
+The OTAU should be automatic - check if "enabled"
+- Login into the "Phoscon" webgui
+- Select "Help"
+- Click the link "Old Webapp version"
+- In the "old GUI" goto "Menu - Settings - Advanced settings"
+- Check the "OTAU Server" checkbox
+- Restart deconz
+- Navigate to your deconz with your browser and add /pwa/ to the URL (example 192.168.1.22:80/pwa/) to get back to the Phoscon GUI
+
+### Check the OTAU progress
+Enable the "DEBUG_OTAU=1" option to see more info in the logfile
+- Connect to the "ZigBee mesh view" via VNC
+- In the VNCviewer sesion, Go to the menu "Plugins" and select "STD OTAU Plugin"
+- Close/move around the docked bars to the left until the OTAU window appear
+- Select an node and push "query"
+- Power cycle the device you what to flash
+- Check the progress the GUI (This is a slow process and the flashing of each device can take up to 20+ minutes)
+*DO NOT power cycle the device during the flashing*
+
+*TODO:* Download the latest IKEA firmware using the IKEA script automatically (on start?) and place the firmware files in the /root/otau directory.. See PRxx
+
 ### Gotchas / Known Issues
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
 
 If you are NOT using host networking (i.e. `--net=host`), and wish to change the websocket port, make sure that both "ends" of the port directive (i.e. `-p`) are changed to match the port specified in the `DECONZ_WS_PORT` environment variable (otherwise, the websocket will not connect resulting in possibly no updating of lights, switches and sensors). For example, if you wish to change the websocket port to 4443, you must specify BOTH `-e DECONZ_WS_PORT=4443` AND `-p 4443:4443` in your `docker run` command.
-
-Over-the-air update functionality is currently untested.
 
 ### Issues / Contributing
 
