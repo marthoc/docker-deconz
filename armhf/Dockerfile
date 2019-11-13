@@ -55,7 +55,7 @@ RUN chmod +x /tini && \
     chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
-ADD https://www.dresden-elektronik.de/rpi/deconz/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
+ADD http://deconz.dresden-elektronik.de/raspbian/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
