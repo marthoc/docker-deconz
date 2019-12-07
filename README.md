@@ -194,6 +194,11 @@ docker build -t "[your-user/]deconz[:local]" ./[arch]
 |`[local]`|Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).|
 |`[arch]`|The architecture you want to build for (currently supported options: `amd64`, `armhf`, and `aarch64`).|
 
+### Connection to the webapp
+If you use docker, webapps might not open. You can open the webapp on another pc thats local and use the host its ip adress:
+http://x.x.x.x:8090/pwa/login.html
+
+
 ### Acknowledgments
 
 Dresden Elektronik for making deCONZ and the Conbee and RaspBee hardware.
