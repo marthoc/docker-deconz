@@ -14,6 +14,13 @@ DECONZ_OPTS="--auto-connect=1 \
         --http-port=$DECONZ_WEB_PORT \
         --ws-port=$DECONZ_WS_PORT"
 
+# If UDEV is different of 0 start the deamon
+if [ "$UDEV" != 0 ]; then
+  echo "[marthoc/deconz] Starting udev daemon"
+  unshare --net /lib/systemd/systemd-udevd --daemon &> /dev/null
+  udevadm trigger &> /dev/null
+fi
+
 if [ "$DECONZ_VNC_MODE" != 0 ]; then
   
   if [ "$DECONZ_VNC_PORT" -lt 5900 ]; then

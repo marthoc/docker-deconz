@@ -163,6 +163,34 @@ A: In order to flash the device, no other program or device on the system can be
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
+### Activate UDEV deamon
+
+In some cases if you have more than one dongles, like for example a Deconz ConbeeII and Aeotec Z-Stick, the system changes the device name on every reboot.
+
+For example on Synology NAS,
+
+- Synology started: ttyACM0 -> Z-Stick, ttyACM1 -> ConbeeII
+- Synology restarted: ttyACM1 -> Z-Stick, ttyACM0 -> ConbeeII
+- Synology restarted: ttyACM0 -> Z-Stick, ttyACM2 -> ConbeeII
+
+The best way is a fixed device name, either using serial/by-id or a UDEV rule.
+
+1. Set **UDEV** environment variable to **1**
+
+- **with serial/by-id** 
+2. open a bash on docker container and list content of */dev/serial/by-id/* pick up the good device name (ex: *usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE1964292-if00*) 
+3. set the value of the environment variable **DECONZ_DEVICE** with it (*/dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE1964292-if00*)
+4. now after reboot the device name is always the same.
+
+- **with UDEV rules**
+2. add volume */etc/udev/rules.d* to docker container and point it to a local folder on your NAS
+3. in this folder create a text file with name *98-usb-conbee.rules* and fill it with (for ConbeeII)
+```bash
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1cf1", ATTRS{idProduct}=="0030", ATTRS{serial}=="DE1964292", SYMLINK+="ttyUSBConbeeII"
+```
+4. set the value of the environment variable **DECONZ_DEVICE** with it (/dev/ttyUSBConbeeII)
+5. now after reboot the device name is always the same.
+
 ### Gotchas / Known Issues
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
