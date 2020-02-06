@@ -57,8 +57,8 @@ if [ "$DECONZ_DISCOVERY_SERVICE" != 1 ]; then
   zllDB=/root/.local/share/dresden-elektronik/deCONZ/zll.db
   if [ -f "$zllDB" ]; then
     sqlite3 $zllDB 'UPDATE config2 SET value=$DECONZ_DISCOVERY_SERVICE WHERE key = "announceinterval"'
+    echo "[marthoc/deconz] Discovery Service Disabled"
   fi
-  echo "[marthoc/deconz] Discovery Service Disabled"
 fi
 
 /usr/bin/deCONZ $DECONZ_OPTS
