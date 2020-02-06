@@ -64,6 +64,8 @@ Use these environment variables to change the default behaviour of the container
 |`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port|
 |`-e DECONZ_VNC_PASSWORD=changeme`|Default password for VNC mode is 'changeme'; this option can (should) be used to change the default password|
 |`-e DECONZ_UPNP=0`|Set this option to 0 to disable uPNP, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/274|
+|`-e DECONZ_DISCOVERY_SERVICE=1`|Set this option to 0 to disable the discovery service that publishes sensitiv data to https://phoscon.de/discover, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/2423#issuecomment-582514610|
+
 
 #### Docker-Compose
 
