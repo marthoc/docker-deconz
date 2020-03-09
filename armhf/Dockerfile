@@ -2,7 +2,7 @@ FROM balenalib/armv7hf-debian:stretch-run
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.74
+    DECONZ_VERSION=2.05.75
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
