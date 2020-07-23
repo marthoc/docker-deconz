@@ -1,8 +1,7 @@
 FROM balenalib/amd64-debian:stretch-run
 
 # Build environment variables
-ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.82
+ENV DECONZ_VERSION=2.05.82
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
@@ -51,11 +50,9 @@ RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Add tini, start.sh, and Conbee udev data; set execute permissions
-ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini /tini
+# Add start.sh and Conbee udev data; set execute permissions
 COPY root /
-RUN chmod +x /tini && \
-    chmod +x /start.sh && \
+RUN chmod +x /start.sh && \
     chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
@@ -69,4 +66,4 @@ VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
 EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
 
-ENTRYPOINT [ "/tini", "--", "/start.sh" ]
+CMD [ "bash", "/start.sh" ]
