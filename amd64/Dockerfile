@@ -1,8 +1,11 @@
-FROM balenalib/amd64-debian:stretch-run
+FROM ubuntu:latest
 
 # Build environment variables
 ENV TINI_VERSION=0.18.0 \
     DECONZ_VERSION=2.05.79
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Berlin
 
 # Runtime environment variables
 ENV DECONZ_WEB_PORT=80 \
@@ -20,7 +23,7 @@ ENV DECONZ_WEB_PORT=80 \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies
-RUN apt-get update && \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get update && \
     apt-get install -y \
         curl \
         kmod \
@@ -36,7 +39,7 @@ RUN apt-get update && \
         sqlite3 \
         tigervnc-standalone-server \
         tigervnc-common \
-        wmii \
+        i3-wm \
         xfonts-base \
         xfonts-scalable && \
     apt-get clean && \

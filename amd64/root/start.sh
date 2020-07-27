@@ -37,7 +37,10 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
 
   # Set VNC security
   tigervncserver -SecurityTypes VncAuth,TLSVnc "$DECONZ_VNC_DISPLAY"
-  
+
+  # Kill VNC config popup
+  kill $(ps -eo '%p,%c' | grep vncconfig | cut -d',' -f1)
+
   # Export VNC display variable
   export DISPLAY=$DECONZ_VNC_DISPLAY
 else
