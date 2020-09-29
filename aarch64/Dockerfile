@@ -1,10 +1,12 @@
 FROM balenalib/aarch64-debian:stretch-run
 
-# Build environment variables
-ENV DECONZ_VERSION=2.05.82
+# Build arguments
+ARG VERSION
+ARG CHANNEL
 
 # Runtime environment variables
-ENV DECONZ_WEB_PORT=80 \
+ENV DECONZ_VERSION=${VERSION} \
+    DECONZ_WEB_PORT=80 \
     DECONZ_WS_PORT=443 \
     DEBUG_INFO=1 \
     DEBUG_APS=0 \
@@ -56,7 +58,7 @@ RUN chmod +x /start.sh && \
     chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
-ADD http://deconz.dresden-elektronik.de/raspbian/alpha/deconz_${DECONZ_VERSION}-debian-stretch-beta_arm64.deb /deconz.deb
+ADD http://deconz.dresden-elektronik.de/debian/${CHANNEL}/deconz_${DECONZ_VERSION}-debian-stretch-${CHANNEL}_arm64.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
