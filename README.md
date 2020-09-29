@@ -64,6 +64,7 @@ Use these environment variables to change the default behaviour of the container
 |`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port|
 |`-e DECONZ_VNC_PASSWORD=changeme`|Default password for VNC mode is 'changeme'; this option can (should) be used to change the default password|
 |`-e DECONZ_UPNP=0`|Set this option to 0 to disable uPNP, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/274|
+|`-e UDEV=1`|Set this option to 1 to enable UDEV support inside the container for control over device names - see the UDEV section below for details (NOTE: requires the container to be run with the --privileged option!)| 
 
 #### Docker-Compose
 
@@ -162,6 +163,16 @@ A: In order to flash the device, no other program or device on the system can be
 ### Viewing the deCONZ ZigBee mesh with VNC
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
+
+### UDEV Support
+
+On some systems, the device name assigned to Conbee or RaspBee can change on reboot. This commonly happens when more than one dongle is used and happens to varying degrees on different host systems. UDEV support allows control over the name assigned to your device.  
+
+1. Set the UDEV environment variable to '1' when creating the container (`-e UDEV=1`) to enable UDEV support. (NOTE: the `--privileged` option is also required!)
+
+2. Find the name assigned to your device in /dev/serial/by-id. E.g.: `/dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE1964292-if00`.
+
+3. Set the value of `-e DECONZ_DEVICE` to the value found in 2: `-e DECONZ_DEVICE=/dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE1964292-if00`. (Note that the `--device` parameter may not be required when using this method.)
 
 ### Gotchas / Known Issues
 
