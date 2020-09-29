@@ -6,9 +6,16 @@ This Docker image containerizes the deCONZ software from Dresden Elektronik, whi
 
 Conbee is supported on `amd64`, `armhf`, and `aarch64` (i.e. RaspberryPi 2/3B/3B+, and other arm64 boards) architectures; RaspBee is supported on `armhf` and `aarch64` (and see the "Configuring Raspbian for RaspBee" section below for instructions to configure Raspbian to allow access to the RaspBee serial hardware).
 
-This image is available on (and should be pulled from) Docker Hub: `marthoc/deconz`.
+Builds of this image are available on (and should be pulled from) Docker Hub, with the following tags:
 
-Current deCONZ version: **2.05.82**
+|Tag|Description|
+|---|-----------|
+|marthoc/deconz:latest|Latest release of deCONZ, stable or beta|
+|marthoc/deconz:stable|Stable releases of deCONZ only|
+|marthoc/deconz:arch-version|Specific releases of deCONZ, use only if you wish to pin your version of deCONZ|
+
+Current latest version: **2.05.82**  
+Current stable version: **2.05.81**
 
 ### Running the deCONZ Container
 
@@ -43,7 +50,7 @@ docker run -d \
 |`-v /etc/localtime:/etc/localtime:ro`|Ensure the container has the correct local time (alternatively, use the TZ environment variable, see below).|
 |`-v /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ`|Bind mount /opt/deconz (or the directory of your choice) into the container for persistent storage.|
 |`--device=/dev/ttyUSB0`|Pass the serial device at ttyUSB0 into the container for use by deCONZ (you may need to investigate which device name is assigned to your device depending on if you are also using other usb serial devices; by default ConBee = /dev/ttyUSB0, Conbee II = /dev/ttyACM0, RaspBee = /dev/ttyAMA0 or /dev/ttyS0).|
-|`marthoc/deconz`|This image uses a manifest list for multiarch support; specifying marthoc/deconz (i.e. marthoc/deconz:latest) will pull the correct version for your arch.|
+|`marthoc/deconz`|This image uses a manifest list for multiarch support; specifying marthoc/deconz:latest or marthoc/deconz:stable will pull the correct version for your arch.|
 
 #### Environment Variables
 
@@ -195,18 +202,20 @@ Pulling `marthoc/deconz` from Docker Hub is the recommended way to obtain this i
 ```bash
 git clone https://github.com/marthoc/docker-deconz.git
 cd docker-deconz
-docker build -t "[your-user/]deconz[:local]" ./[arch]
+docker build --build-arg VERSION=`[BUILD_VERSION]` --build-arg CHANNEL=`[BUILD_CHANNEL]` -t "[your-user/]deconz[:local]" ./[arch]
 ```
 
 |Parameter|Description|
 |---------|-----------|
+|`[BUILD_VERSION]`|The version of deCONZ you wish to build.|
+|`[BUILD_CHANNEL]`|The channel (i.e. stable or beta) that corresponds to the deCONZ version you wish to build.|
 |`[your-user/]`|Your username (optional).|
 |`deconz`|The name you want the built Docker image to have on your system (default: deconz).|
 |`[local]`|Adds the tag `:local` to the image (to help differentiate between this image and your locally built image) (optional).|
 |`[arch]`|The architecture you want to build for (currently supported options: `amd64`, `armhf`, and `aarch64`).|
 
+*Note: VERSION and CHANNEL are required arguments and the image will fail to build if they are not specified.*  
+
 ### Acknowledgments
 
 Dresden Elektronik for making deCONZ and the Conbee and RaspBee hardware.
-
-@krallin for his "tini" container init process: https://github.com/krallin/tini.
