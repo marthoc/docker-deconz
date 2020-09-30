@@ -39,9 +39,9 @@ ls -1 "$FW_PATH"
 
 echo " "
 echo "Enter the firmware file name from above, including extension."
-echo "Alternetivly you may enter the name of a firmware file to download"
+echo "Alternativly you may enter the name of a firmware file to download"
 echo "from $FW_BASE"
-echo "Simply press Enter now to exit."
+echo "or press Enter now to exit."
 echo " "
 
 read -p "File Name : " fileName
@@ -52,7 +52,7 @@ if [[ -z "${fileName// }" ]]; then
 fi
 filePath="${FW_PATH%/}/$fileName"
 if [[ ! -f $filePath ]]; then
-        echo "File does not exist. Trying download."
+        echo "File not found locally. Try to download."
         read -p "Enter Y to proceed, any other entry to exit: " answer
         echo " "
         if [[ $answer != [yY] ]]; then
@@ -61,19 +61,27 @@ if [[ ! -f $filePath ]]; then
         fi
         echo "Downloading..."
         echo " "
-        curl -o "$filePath" "${FW_BASE%/}/$fileName"
+        curl --fail --output "$filePath" "${FW_BASE%/}/$fileName"
         retVal=$?
-        if (( retVal != 0 )); then
+        if [[ ! -f $filePath ]] || (( retVal != 0 )); then
                 echo " "
                 echo "Download Error! Please re-run this script..."
                 echo " "
-                exit $retVal
+                [[ -f $filePath ]] && rm "$filePath"
+                exit $(( retVal == 0 ? 1 : retVal ))
         fi
         echo " "
         echo "Download complete! Checking md5 checksum:"
-        md5=$(curl -s "${FW_BASE%/}/${fileName}.md5")
+        md5=$(curl --fail --silent "${FW_BASE%/}/${fileName}.md542")
         echo "${md5% *} ${filePath}" | md5sum --check
+        retVal=$?
         echo " "
+        if (( retVal != 0 )); then
+                echo "Error on checksum evalutaion! Please re-run this script..."
+                echo " "
+                rm "$filePath"
+                exit $retVal
+        fi
 fi
 
 echo "-------------------------------------------------------------------"
@@ -92,7 +100,7 @@ if [[ $correctVal == [yY] ]]; then
         $FLASHER -d $deviceName -f "$filePath"
 
         retVal=$?
-        if [ $retVal != 0 ]; then
+        if (( retVal != 0 )); then
                 echo " "
                 echo "Flashing Error! Please re-run this script..."
                 echo " "
