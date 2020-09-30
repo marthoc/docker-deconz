@@ -1,11 +1,12 @@
 FROM balenalib/armv7hf-debian:stretch-run
 
-# Build environment variables
-ENV TINI_VERSION=0.18.0 \
-    DECONZ_VERSION=2.05.82
+# Build arguments
+ARG VERSION
+ARG CHANNEL
 
 # Runtime environment variables
-ENV DECONZ_WEB_PORT=80 \
+ENV DECONZ_VERSION=${VERSION} \
+    DECONZ_WEB_PORT=80 \
     DECONZ_WS_PORT=443 \
     DEBUG_INFO=1 \
     DEBUG_APS=0 \
@@ -47,15 +48,22 @@ ADD https://project-downloads.drogon.net/wiringpi-latest.deb /wiringpi.deb
 RUN dpkg -i /wiringpi.deb && \
     rm -f /wiringpi.deb
 
-# Add tini, start.sh, and Conbee udev data; set execute permissions
-ADD https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-armhf /tini
+# WORKAROUND: update libc6 so flashing script works
+# This can be removed when the base image includes GLIBC >= 2.28
+RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install --only-upgrade -y \
+        libc6 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add start.sh and Conbee udev data; set execute permissions
 COPY root /
-RUN chmod +x /tini && \
-    chmod +x /start.sh && \
+RUN chmod +x /start.sh && \
     chmod +x /firmware-update.sh
 
 # Add deCONZ, install deCONZ, make OTAU dir
-ADD http://deconz.dresden-elektronik.de/raspbian/beta/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
+ADD http://deconz.dresden-elektronik.de/raspbian/${CHANNEL}/deconz-${DECONZ_VERSION}-qt5.deb /deconz.deb
 RUN dpkg -i /deconz.deb && \
     rm -f /deconz.deb && \
     mkdir /root/otau && \
@@ -65,4 +73,4 @@ VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
 EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
 
-ENTRYPOINT [ "/tini", "--", "/start.sh" ]
+CMD [ "bash", "/start.sh" ]
