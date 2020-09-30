@@ -7,32 +7,52 @@ env:
   - secure: cvRrxlzPYRvhd7nv6dWjU/af+y0pel2vemgfFLhmqqIuPIdPa5PICtFI+A8bNz5Euff8zFYmtR9ogns5opA4LIQNDF05x6xrySiatR0ak877ywDFJ7VRucqPghqca1vXdSWN5baQ3hdqK70mg6GKU9N35XMHbvuF4W2eGA4mYnWQy0cTdnclde5Y11uvkr2RWiaRYdBrLbdiIJPzzAmWN9bVkJSVwckmZtgZ6T2KcPEehM9JAPVZIq/rlwTjMZG12AZ516+npiUycqZAEtPfXiv52666rcloSWZYyKRsYiuaaMkCYz3Jhz8OE7zmzNoktF6AWNRxh1ehpAlLLPXjig7c1V2Kx9pg0OCvn61kCjkQqhlOSecJ5nlfX4lo9S+nPWNCzJxqBbq1cN3dJxd0ekGMg4NmRVEFACPJu2eaCsyvh6yRfGDnHire6mT/sHEV2H+DSnqcehSFYn2W4IYQtVlTdTtQZpIz1Qx5FvMycYF/SCsbjOxMPWpKUYi8B6+YS5oUxrYff3OQH/VYVSM3jvHxvFe8DrVWZEEjnOJudUI/GcpTo3esBtLXNEWzyRrGaI+TU+Eb53f4dU3hZ6HSXrNMUhrtNd21IWTB2SVEt3jpUkz1hyDVYJ/cG/w8e7q+m7ftZsrNVmwHBSr7GoKX03hkLUdrg7ixrIe8r9gYbAs=
   - secure: pmjCULhGVpS0VOR3Qjh2xsmDJqP0WWd0dUiTn2WNn4jKIw2TsV3B5dAACNgloL/w5v5cCzvKLuI5c338/8TBb4vDjpCIepeIaPxqhfXaENV2wn61z5kT/wfmu6QTuHFFNUj6Le9UD+PwZs0314trXN6/dwrULgeoCJH9Pfwf1BoPdtBGEmWAWeQ66QRMnX1zxzzhrAEp34/hE2P1V+65rMgDW6erkXI2eJk2WlJW5t1ktnhTNH2qUp7OpaWdw+d4pSKsECjrM5LhImdtPBy+VAJtE19t8ilzLrprcfFpyTPLboSFTToO5Yr1Jz7o6ea5amNSFS6xdjy+AZbSqJ0xQDIN+ns60mGfLeEXyTtu7EhGlDMdZRHIPJAefoy1/GNAvjPQGSsfchM+kiBodM+Ikv21ge5CuJOXPRawqsu0KecdizFCOiQ7w0p7VpV7Fcazr5IYvvY5zDdWErMEdd90o7c2AA+m8yRCZrqzQOrVEClHI/P33xZ3/T3FTXJ1Y0Qa0f7XQEU1GSyZv1Y/9MxXGnsa9WbrqmL8vtDSOnYixiszVlPtyjhEIsLellQzc8RolCdcgv9eItk+I7uBmpyYj/+TOSY1rw8OC7OHxop4wEe5su42LfjbDEzDYDkjO4tLpmND+c5KLX8zX1Qm83Q4uDKOTmSoonBR+xlZIJg8bDc=
 install:
-  - wget https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64 -O manifest-tool
+  - sudo apt-get install -y jq
+  - wget https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64 -O manifest-tool
   - chmod +x manifest-tool
 script:
+# Parse variables
+  - BUILD_VERSION=$(cat version.json | jq -r .version)
+  - BUILD_CHANNEL=$(cat version.json | jq -r .channel)
 # Build amd64
-  - docker build -t "marthoc/deconz:amd64" ./amd64
-# Build armhf
+  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:amd64" ./amd64
+# Build armv7
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build -t "marthoc/deconz:armhf" ./armhf
-# Build aarch64
+  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:armv7" ./armv7
+# Build arm64
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build -t "marthoc/deconz:aarch64" ./aarch64
+  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:arm64" ./arm64
 after_success:
-# Tag and push built images, update manifest for marthoc/deconz:latest
+# Tag and push built images, update manifests
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
-      VERSION=$(cat .VERSION)
-      docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-$VERSION
+      docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-$BUILD_VERSION
       docker push marthoc/deconz:amd64
-      docker push marthoc/deconz:amd64-$VERSION
-      docker tag marthoc/deconz:armhf marthoc/deconz:armhf-$VERSION
+      docker push marthoc/deconz:amd64-$BUILD_VERSION
+      docker tag marthoc/deconz:armv7 marthoc/deconz:armv7-$BUILD_VERSION
+      docker tag marthoc/deconz:armv7 marthoc/deconz:armhf
+      docker tag marthoc/deconz:armv7 marthoc/deconz:armhf-$BUILD_VERSION
+      docker push marthoc/deconz:armv7
+      docker push marthoc/deconz:armv7-$BUILD_VERSION
       docker push marthoc/deconz:armhf
-      docker push marthoc/deconz:armhf-$VERSION
-      docker tag marthoc/deconz:aarch64 marthoc/deconz:aarch64-$VERSION
+      docker push marthoc/deconz:armhf-$BUILD_VERSION
+      docker tag marthoc/deconz:arm64 marthoc/deconz:arm64-$BUILD_VERSION
+      docker tag marthoc/deconz:arm64 marthoc/deconz:aarch64
+      docker tag marthoc/deconz:arm64 marthoc/deconz:aarch64-$BUILD_VERSION
+      docker push marthoc/deconz:arm64
+      docker push marthoc/deconz:arm64-$BUILD_VERSION
       docker push marthoc/deconz:aarch64
-      docker push marthoc/deconz:aarch64-$VERSION
-      ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-spec manifest.yml
+      docker push marthoc/deconz:aarch64-$BUILD_VERSION
+      ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
+        --platforms linux/amd64,linux/arm/v7,linux/arm64 \
+        --template marthoc/deconz:ARCHVARIANT-$BUILD_VERSION \
+        --target marthoc/deconz:latest 
+      if [ "$BUILD_CHANNEL" == "stable" ]; then
+        ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
+          --platforms linux/amd64,linux/arm/v7,linux/arm64 \
+          --template marthoc/deconz:ARCHVARIANT-$BUILD_VERSION \
+          --target marthoc/deconz:stable
+      fi
     fi
     
