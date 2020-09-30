@@ -164,6 +164,37 @@ A: In order to flash the device, no other program or device on the system can be
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
+### Using docker secret for VNC password
+
+When using docker in swarm mode it is possible to use a docker secret for the VNC password.
+
+1. Create a docker secret for the password: `printf changeme | docker secret create deconz-vnc-password -`
+
+2. Update the docker-compose.yml:
+```
+version: '3.8'
+
+services:
+  deconz:
+    image: marthoc/deconz
+    volumes:
+      - /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ
+      - /dev/conbeeII:/dev/conbeeII
+    environment:
+      - DECONZ_WEB_PORT=80
+      - DECONZ_WS_PORT=443
+      - DECONZ_DEVICE=/dev/conbeeII
+      - DECONZ_VNC_MODE=1
+      - DECONZ_VNC_PASSWORD_FILE=/run/secrets/deconz-vnc-password
+    secrets:
+      - deconz-vnc-password
+
+secrets:
+  deconz-vnc-password:
+    external: true
+```
+3. Use docker stack command to deploy the service: `docker stack deploy -c docker-compose.yml deconz`
+
 ### Gotchas / Known Issues
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
