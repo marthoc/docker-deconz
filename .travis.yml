@@ -18,10 +18,10 @@ script:
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:amd64" ./amd64
 # Build armv7
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:armhf" ./armv7
+  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:armv7" ./armv7
 # Build arm64
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:aarch64" ./arm64
+  - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:arm64" ./arm64
 after_success:
 # Tag and push built images, update manifests
   - >
