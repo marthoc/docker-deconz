@@ -23,23 +23,20 @@ echo " "
 echo "Enter the full device path, or press Enter now to exit."
 echo " "
 read -p "Device Path : " deviceName
-
+echo " "
 if [[ -z "${deviceName// }" ]]; then
         echo "Exiting..."
         exit 1
 fi
 
-echo " "
 echo "-------------------------------------------------------------------"
 echo " "
 echo "Firmware available for flashing:"
-echo " "
-
 ls -1 "$FW_PATH"
 
 echo " "
 echo "Enter the firmware file name from above, including extension."
-echo "Alternativly you may enter the name of a firmware file to download"
+echo "Alternatively, you may enter the name of a firmware file to download"
 echo "from $FW_BASE"
 echo "or press Enter now to exit."
 echo " "
@@ -52,7 +49,7 @@ if [[ -z "${fileName// }" ]]; then
 fi
 filePath="${FW_PATH%/}/$fileName"
 if [[ ! -f $filePath ]]; then
-        echo "File not found locally. Try to download."
+        echo "File not found locally. Try to download?"
         read -p "Enter Y to proceed, any other entry to exit: " answer
         echo " "
         if [[ $answer != [yY] ]]; then
@@ -71,13 +68,13 @@ if [[ ! -f $filePath ]]; then
                 exit $(( retVal == 0 ? 1 : retVal ))
         fi
         echo " "
-        echo "Download complete! Checking md5 checksum:"
+        echo "Download complete! Checking md5 checksum..."
         md5=$(curl --fail --silent "${FW_BASE%/}/${fileName}.md542")
         echo "${md5% *} ${filePath}" | md5sum --check
         retVal=$?
         echo " "
         if (( retVal != 0 )); then
-                echo "Error on checksum evalutaion! Please re-run this script..."
+                echo "Error comparing checksums! Please re-run this script..."
                 echo " "
                 rm "$filePath"
                 exit $retVal
