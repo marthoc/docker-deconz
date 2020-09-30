@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.5
+VERSION=0.6
 FLASHER=/usr/bin/GCFFlasher_internal
 FW_PATH=/usr/share/deCONZ/firmware/
 FW_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/
