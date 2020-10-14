@@ -14,8 +14,7 @@ Builds of this image are available on (and should be pulled from) Docker Hub, wi
 |marthoc/deconz:stable|Stable releases of deCONZ only|
 |marthoc/deconz:arch-version|Specific releases of deCONZ, use only if you wish to pin your version of deCONZ|
 
-Current latest version: **2.05.83**  
-Current stable version: **2.05.81**
+Please consult Docker Hub for the latest available versions of this image.
 
 ### Running the deCONZ Container
 
