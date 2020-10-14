@@ -52,7 +52,7 @@ RUN dpkg -i /wiringpi.deb && \
 # This can be removed when the base image includes GLIBC >= 2.28
 RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install --only-upgrade -y \
+    apt-get install --only-upgrade -y -o APT::Immediate-Configure=false \
         libc6 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
