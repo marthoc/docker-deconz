@@ -69,7 +69,7 @@ if [[ ! -f $filePath ]]; then
         fi
         echo " "
         echo "Download complete! Checking md5 checksum..."
-        md5=$(curl --fail --silent "${FW_BASE%/}/${fileName}.md542")
+        md5=$(curl --fail --silent "${FW_BASE%/}/${fileName}.md5")
         echo "${md5% *} ${filePath}" | md5sum --check
         retVal=$?
         echo " "
