@@ -73,4 +73,4 @@ VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
 EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
 
-CMD [ "bash", "/start.sh" ]
+ENTRYPOINT [ "/start.sh" ]
