@@ -23,10 +23,18 @@ script:
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:arm64" ./arm64
 after_success:
-# Tag and push built images, update manifests
+# Login to Docker Hub
+  - docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
+# Tag and push test images after a successful build
+  - docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-test
+  - docker push marthoc/deconz:amd64-test
+  - docker tag marthoc/deconz:armv7 marthoc/deconz:armv7-test
+  - docker push marthoc/deconz:armv7-test
+  - docker tag marthoc/deconz:arm64 marthoc/deconz:arm64-test
+  - docker push marthoc/deconz:arm64-test
+# If merged to master, tag and push production images and update manifests
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-      docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
       docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-$BUILD_VERSION
       docker push marthoc/deconz:amd64
       docker push marthoc/deconz:amd64-$BUILD_VERSION
