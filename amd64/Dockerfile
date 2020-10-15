@@ -5,7 +5,8 @@ ARG VERSION
 ARG CHANNEL
 
 # Runtime environment variables
-ENV DECONZ_VERSION=${VERSION} \
+ENV DEBIAN_FRONTEND=noninteractive \
+    DECONZ_VERSION=${VERSION} \
     DECONZ_WEB_PORT=80 \
     DECONZ_WS_PORT=443 \
     DEBUG_INFO=1 \
