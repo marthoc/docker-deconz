@@ -13,6 +13,7 @@ Builds of this image are available on (and should be pulled from) Docker Hub, wi
 |marthoc/deconz:latest|Latest release of deCONZ, stable or beta|
 |marthoc/deconz:stable|Stable releases of deCONZ only|
 |marthoc/deconz:arch-version|Specific releases of deCONZ, use only if you wish to pin your version of deCONZ|
+|marthoc/deconz:arch-test|Test builds of this image, not for use by end users, only for developer testing!|
 
 Please consult Docker Hub for the latest available versions of this image.
 
