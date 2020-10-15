@@ -214,3 +214,5 @@ docker build --build-arg VERSION=`[BUILD_VERSION]` --build-arg CHANNEL=`[BUILD_C
 ### Acknowledgments
 
 Dresden Elektronik for making deCONZ and the Conbee and RaspBee hardware.
+
+https://github.com/multiarch/qemu-user-static for making multi-arch builds on Travis CI possible.
