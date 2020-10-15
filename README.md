@@ -169,6 +169,13 @@ A: In order to flash the device, no other program or device on the system can be
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
+If VNC does not work and you see an error like the following in the container logs, you can resolve by incrementing the DECONZ_VNC_PORT variable (i.e. to 5901 or 5902). 
+```
+tigervncserver: /usr/bin/Xtigervnc did not start up, please look into '/root/.vnc/debian:0.log' to determine the reason! -2
+Invalid MIT-MAGIC-COOKIE-1 keyqt.qpa.screen: QXcbConnection: Could not connect to display :0
+Could not connect to any X display.
+```
+
 ### Gotchas / Known Issues
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
