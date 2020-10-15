@@ -1,4 +1,4 @@
-FROM balenalib/armv7hf-debian:stretch-run
+FROM arm32v7/debian:10.6-slim
 
 # Build arguments
 ARG VERSION
@@ -47,15 +47,6 @@ RUN apt-get update && \
 ADD https://project-downloads.drogon.net/wiringpi-latest.deb /wiringpi.deb
 RUN dpkg -i /wiringpi.deb && \
     rm -f /wiringpi.deb
-
-# WORKAROUND: update libc6 so flashing script works
-# This can be removed when the base image includes GLIBC >= 2.28
-RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install --only-upgrade -y -o APT::Immediate-Configure=false \
-        libc6 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # Add start.sh and Conbee udev data; set execute permissions
 COPY root /

@@ -1,4 +1,4 @@
-FROM balenalib/aarch64-debian:stretch-run
+FROM arm64v8/debian:10.6-slim
 
 # Build arguments
 ARG VERSION
@@ -40,15 +40,6 @@ RUN apt-get update && \
         wmii \
         xfonts-base \
         xfonts-scalable && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# WORKAROUND: update libc6 so flashing script works
-# This can be removed when the base image includes GLIBC >= 2.28
-RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install --only-upgrade -y -o APT::Immediate-Configure=false \
-        libc6 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
