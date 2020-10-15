@@ -1,4 +1,6 @@
+FROM multiarch/qemu-user-static:arm as qemu
 FROM arm32v7/debian:10.6-slim
+COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 
 # Build arguments
 ARG VERSION
