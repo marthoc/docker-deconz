@@ -1,6 +1,6 @@
 ## deCONZ Docker Image
 
-[![Build Status](https://travis-ci.org/marthoc/docker-deconz.svg?branch=master)](https://travis-ci.org/marthoc/docker-deconz)
+[![Build Status](https://travis-ci.org/marthoc/docker-deconz.svg?branch=master)](https://travis-ci.org/marthoc/docker-deconz) [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WBGSD2WU6944G)
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets, and optionally runs a VNC server for viewing and interacting with the ZigBee mesh through the deCONZ UI.
 
@@ -13,6 +13,7 @@ Builds of this image are available on (and should be pulled from) Docker Hub, wi
 |marthoc/deconz:latest|Latest release of deCONZ, stable or beta|
 |marthoc/deconz:stable|Stable releases of deCONZ only|
 |marthoc/deconz:arch-version|Specific releases of deCONZ, use only if you wish to pin your version of deCONZ|
+|marthoc/deconz:arch-test|Test builds of this image, not for use by end users, only for developer testing!|
 
 Please consult Docker Hub for the latest available versions of this image.
 
@@ -169,6 +170,15 @@ A: In order to flash the device, no other program or device on the system can be
 
 Setting the environment variable DECONZ_VNC_MODE to 1 enables a VNC server in the container; connect to this VNC server with a VNC client to view the deCONZ ZigBee mesh. The environment variable DECONZ_VNC_PORT allows you to control the port the VNC server listens on (default 5900); environment variable DECONZ_VNC_PASSWORD allows you to set the password for the VNC server (default is 'changeme' and should be changed!).
 
+Note that if you are not using --host networking, you will need to add a -p directive for the DECONZ_VNC_PORT (i.e. `-p 5900:5900`).
+
+If VNC does not work and you see an error like the following in the container logs, you can resolve by incrementing the DECONZ_VNC_PORT variable (i.e. to 5901 or 5902). 
+```
+tigervncserver: /usr/bin/Xtigervnc did not start up, please look into '/root/.vnc/debian:0.log' to determine the reason! -2
+Invalid MIT-MAGIC-COOKIE-1 keyqt.qpa.screen: QXcbConnection: Could not connect to display :0
+Could not connect to any X display.
+```
+
 ### Gotchas / Known Issues
 
 Firmware updates from the web UI will fail silently and the Conbee/RaspBee device will stay at its current firmware level. See "Updating Conbee/RaspBee Firmware" above for instructions to update your device's firmware when a new version is available.
@@ -207,3 +217,5 @@ docker build --build-arg VERSION=`[BUILD_VERSION]` --build-arg CHANNEL=`[BUILD_C
 ### Acknowledgments
 
 Dresden Elektronik for making deCONZ and the Conbee and RaspBee hardware.
+
+https://github.com/multiarch/qemu-user-static for making multi-arch builds on Travis CI possible.
