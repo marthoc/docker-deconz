@@ -1,11 +1,14 @@
-FROM balenalib/armv7hf-debian:stretch-run
+FROM multiarch/qemu-user-static:arm as qemu
+FROM arm32v7/debian:10.6-slim
+COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 
 # Build arguments
 ARG VERSION
 ARG CHANNEL
 
 # Runtime environment variables
-ENV DECONZ_VERSION=${VERSION} \
+ENV DEBIAN_FRONTEND=noninteracive \
+    DECONZ_VERSION=${VERSION} \
     DECONZ_WEB_PORT=80 \
     DECONZ_WS_PORT=443 \
     DEBUG_INFO=1 \
@@ -47,15 +50,6 @@ RUN apt-get update && \
 ADD https://project-downloads.drogon.net/wiringpi-latest.deb /wiringpi.deb
 RUN dpkg -i /wiringpi.deb && \
     rm -f /wiringpi.deb
-
-# WORKAROUND: update libc6 so flashing script works
-# This can be removed when the base image includes GLIBC >= 2.28
-RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install --only-upgrade -y -o APT::Immediate-Configure=false \
-        libc6 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # Add start.sh and Conbee udev data; set execute permissions
 COPY root /
