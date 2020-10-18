@@ -1,11 +1,14 @@
-FROM balenalib/aarch64-debian:stretch-run
+FROM multiarch/qemu-user-static:aarch64 as qemu
+FROM arm64v8/debian:10.6-slim
+COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
 # Build arguments
 ARG VERSION
 ARG CHANNEL
 
 # Runtime environment variables
-ENV DECONZ_VERSION=${VERSION} \
+ENV DEBIAN_FRONTEND=noninteractive \
+    DECONZ_VERSION=${VERSION} \
     DECONZ_WEB_PORT=80 \
     DECONZ_WS_PORT=443 \
     DEBUG_INFO=1 \
@@ -43,15 +46,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# WORKAROUND: update libc6 so flashing script works
-# This can be removed when the base image includes GLIBC >= 2.28
-RUN echo "deb http://ftp.us.debian.org/debian sid main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install --only-upgrade -y \
-        libc6 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Add start.sh and Conbee udev data; set execute permissions
 COPY root /
 RUN chmod +x /start.sh && \
@@ -68,4 +62,4 @@ VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
 EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
 
-CMD [ "bash", "/start.sh" ]
+ENTRYPOINT [ "/start.sh" ]
