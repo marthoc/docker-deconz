@@ -44,6 +44,14 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Workaround required on amd64 to address issue #292
+RUN apt-get update && \
+    apt-get install -y \
+        binutils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
+
 # Add start.sh and Conbee udev data; set execute permissions
 COPY root /
 RUN chmod +x /start.sh && \
