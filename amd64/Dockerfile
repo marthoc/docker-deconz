@@ -1,12 +1,11 @@
-FROM debian:10.6-slim
+FROM ubuntu:bionic
 
 # Build arguments
 ARG VERSION
 ARG CHANNEL
 
 # Runtime environment variables
-ENV DEBIAN_FRONTEND=noninteractive \
-    DECONZ_VERSION=${VERSION} \
+ENV DECONZ_VERSION=${VERSION} \
     DECONZ_WEB_PORT=80 \
     DECONZ_WS_PORT=443 \
     DEBUG_INFO=1 \
