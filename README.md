@@ -151,9 +151,16 @@ GW firmware version shall be updated to: 0x261e0500
 
 2. `docker stop [container name]` or `docker-compose down` to stop your running deCONZ container (you must do this or the firmware update will fail).
 
-3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
+3. Invoke the firmware update script: 
+```bash
+docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz
+```
 
-If you have multiple usb devices, you can map the `/dev/...` volume corresponding to your Conbee/Raspbee to avoid wrong path mapping. (e.g. `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DExxxxxxx-if00:/dev/ttyACM0  -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`).
+If you have multiple usb devices, you can map the `/dev/...` volume corresponding to your Conbee/Raspbee to avoid wrong path mapping. 
+
+```bash
+docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DExxxxxxx-if00:/dev/ttyACM0  -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz
+```
 
 4. Follow the prompts:
 - Enter the path (e.g. `/dev/ttyUSB0`) that corresponds to your device in the listing.
