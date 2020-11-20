@@ -59,8 +59,8 @@ function exit_with_error() {
 # - on exit print 1st param or "Exiting..." as message
 # ---------------------------
 function exit_on_error() {
-    typeset msg="$1"
     typeset -i retVal="${2:-$?}"
+    typeset msg="$1"
     (( retVal == 0 )) || exit_with_error "$msg" $retVal
 }
 
@@ -71,9 +71,9 @@ function exit_on_error() {
 # - on exit print 2nd param or "Exiting..." as message
 # ---------------------------
 function delete_and_exit_on_error() {
+    typeset -i retVal="${3:-$?}"
     typeset file="$1"
     typeset msg="$2"
-    typeset -i retVal="${2:-$?}"
     if (( retVal != 0 )); then
         [[ -f $file ]] && rm "$file"
         exit_with_error "$msg" $retVal
@@ -125,8 +125,9 @@ echo " "
 echo "Enter the full device path, or press Enter now to exit."
 echo " "
 
-read -ep "Device path : " -i "${FLASHER_PARAM_VALUES[-d]}" FLASHER_PARAM_VALUES[-d]
-exit_on_enter ${FLASHER_PARAM_VALUES[-d]}
+param=-d
+read -ep "${FLASHER_PARAM_NAMES[$param]}: " -i "${FLASHER_PARAM_VALUES[$param]}" FLASHER_PARAM_VALUES[$param]
+exit_on_enter ${FLASHER_PARAM_VALUES[$param]}
 
 echo " "
 echo "-------------------------------------------------------------------"
@@ -141,10 +142,12 @@ echo "from $FW_ONLINE_BASE"
 echo "or press Enter now to exit."
 echo " "
 
-read -ep "File Name : " -i "${FLASHER_PARAM_VALUES[-f]##*/}" fileName
+param=-f
+read -ep "${FLASHER_PARAM_NAMES[$param]}: " -i "${FLASHER_PARAM_VALUES[$param]##*/}" fileName
 exit_on_enter $fileName
+FLASHER_PARAM_VALUES[$param]="${FW_PATH%/}/$fileName"
+
 echo " "
-FLASHER_PARAM_VALUES[-f]="${FW_PATH%/}/$fileName"
 if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
     echo "File not found locally. Try to download?"
     read -ep "Enter Y to proceed, any other entry to exit: " answer
@@ -158,7 +161,7 @@ if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
     echo " "
     echo "Download complete! Checking md5 checksum..."
     md5=$(curl --fail --silent "${FW_ONLINE_BASE%/}/${fileName}.md5")
-    [[ -z $md5 ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Checksum file '${fileName}.md5' not found! Please re-run this script..."
+    [[ -n $md5 ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Checksum file '${fileName}.md5' not found! Please re-run this script..."
     echo "${md5% *} ${FLASHER_PARAM_VALUES[-f]}" | md5sum --check
     delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Error comparing checksums! Please re-run this script..."
     echo " "
