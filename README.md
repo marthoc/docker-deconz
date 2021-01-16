@@ -70,7 +70,7 @@ Use these environment variables to change the default behaviour of the container
 |`-e DECONZ_VNC_MODE=1`|Set this option to enable VNC access to the container to view the deCONZ ZigBee mesh|
 |`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port|
 |`-e DECONZ_VNC_PASSWORD=changeme`|Default password for VNC mode is 'changeme'; this option can (should) be used to change the default password|
-|`-e DECONZ_VNC_OPTS="-g 1280x900"`|Pass more options to the VNC server, e.g. -g changes the screen resolution|
+|`-e DECONZ_VNC_OPTS="-g 1280x900"`|Pass more options to the VNC server. Example: -g changes the screen resolution|
 |`-e DECONZ_UPNP=0`|Set this option to 0 to disable uPNP, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/274|
 
 #### Docker-Compose
