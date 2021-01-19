@@ -24,7 +24,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies
-RUN add-apt-repository && \
+RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ focal universe" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y \
         curl \
