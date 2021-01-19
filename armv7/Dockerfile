@@ -24,7 +24,8 @@ ENV DEBIAN_FRONTEND=noninteracive \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies (except for WiringPi)
-RUN apt-get update && \
+RUN add-apt-repository && \
+    apt-get update && \
     apt-get install -y \
         curl \
         kmod \
