@@ -1,4 +1,4 @@
-FROM debian:10.6-slim
+FROM ubuntu:20.04
 
 # Build arguments
 ARG VERSION

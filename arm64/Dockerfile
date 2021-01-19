@@ -1,5 +1,5 @@
 FROM multiarch/qemu-user-static:aarch64 as qemu
-FROM arm64v8/debian:10.6-slim
+FROM arm64v8/ubuntu:20.04
 COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
 # Build arguments
