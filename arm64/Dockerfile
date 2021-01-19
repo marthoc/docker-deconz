@@ -1,5 +1,5 @@
 FROM multiarch/qemu-user-static:aarch64 as qemu
-FROM arm64v8/ubuntu:20.04
+FROM arm64v8/ubuntu:bionic
 COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
 # Build arguments
@@ -24,8 +24,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ focal universe" >> /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y \
         curl \
         kmod \

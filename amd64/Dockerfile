@@ -1,5 +1,4 @@
-FROM ubuntu:20.04
-
+FROM ubuntu:bionic
 # Build arguments
 ARG VERSION
 ARG CHANNEL
@@ -22,8 +21,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ focal universe" >> /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y \
         curl \
         kmod \

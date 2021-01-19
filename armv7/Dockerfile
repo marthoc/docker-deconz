@@ -1,5 +1,5 @@
 FROM multiarch/qemu-user-static:arm as qemu
-FROM arm32v7/ubuntu:20.04
+FROM arm32v7/ubuntu:bionic
 COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 
 # Build arguments
@@ -24,8 +24,7 @@ ENV DEBIAN_FRONTEND=noninteracive \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies (except for WiringPi)
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ focal universe" >> /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y \
         curl \
         kmod \
