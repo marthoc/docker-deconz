@@ -151,14 +151,16 @@ GW firmware version shall be updated to: 0x261e0500
 
 2. `docker stop [container name]` or `docker-compose down` to stop your running deCONZ container (you must do this or the firmware update will fail).
 
-3. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
+3. In case your docker host is Ubuntu, make sure the ModemManager is stopped or the update will [fail](https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Update-deCONZ-manually#update-in-ubuntu): `sudo systemctl stop ModemManager`
 
-4. Follow the prompts:
+4. Invoke the firmware update script: `docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz`
+
+5. Follow the prompts:
 - Enter the path (e.g. `/dev/ttyUSB0`) that corresponds to your device in the listing.
 - Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
 - If the device/path and file name look OK, type Y to start flashing!
 
-5. Restart your deCONZ container (`docker start [container name]` or `docker-compose up`).
+6. Restart your deCONZ container (`docker start [container name]` or `docker-compose up`).
 
 #### Firmware Flashing Script FAQ
 
