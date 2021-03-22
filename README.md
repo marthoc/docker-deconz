@@ -21,12 +21,16 @@ Please consult Docker Hub for the latest available versions of this image.
 
 #### Pre-requisite
 
-Before running the command that creates the deconz Docker container, you may need to add your Linux user to the `dialout` group, which allows the user access to serial devices (i.e. Conbee/Conbee II/RaspBee):
+Before running the command that creates the deconz Docker container, you may need to add your Linux user to the `dialout` group, which allows the user access to serial devices (i.e. Conbee/Conbee II/RaspBee/RaspBeeII):
 
 ```bash
 sudo usermod -a -G dialout $USER
 ```
 
+For a RaspBee/Raspbee 2 installation on a Raspberry PI 4B : Make sure to have Wiring Pi updated to the latest version!
+```
+sudo apt install wiringpi
+``` 
 #### Command Line
 
 ```bash
