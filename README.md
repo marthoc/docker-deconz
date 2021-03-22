@@ -29,9 +29,7 @@ sudo usermod -a -G dialout $USER
 
 For a RaspBee/Raspbee 2 installation on a Raspberry PI 4B : Make sure to have Wiring Pi updated to the latest version!
 ```
- cd /tmp
- wget https://project-downloads.drogon.net/wiringpi-latest.deb
- sudo dpkg -i wiringpi-latest.deb
+sudo apt install wiringpi
 ``` 
 #### Command Line
 
