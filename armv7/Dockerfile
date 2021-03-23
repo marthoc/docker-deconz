@@ -68,6 +68,6 @@ RUN dpkg -i /deconz.deb && \
 
 VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
-EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
+EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT} ${DECONZ_NOVNC_PORT}
 
 ENTRYPOINT [ "/start.sh" ]
