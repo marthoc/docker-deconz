@@ -1,4 +1,4 @@
-FROM debian:10.6-slim
+FROM ubuntu:20.04
 
 # Build arguments
 ARG VERSION
@@ -19,6 +19,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DECONZ_VNC_DISPLAY=0 \
     DECONZ_VNC_PASSWORD=changeme \
     DECONZ_VNC_PORT=5900 \
+    DECONZ_NOVNC_PORT=6080 \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies
@@ -38,7 +39,9 @@ RUN apt-get update && \
         sqlite3 \
         tigervnc-standalone-server \
         tigervnc-common \
-        wmii \
+	novnc \
+	websockify \
+        openbox \
         xfonts-base \
         xfonts-scalable && \
     apt-get clean && \
