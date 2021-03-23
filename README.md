@@ -70,6 +70,7 @@ Use these environment variables to change the default behaviour of the container
 |`-e DECONZ_VNC_MODE=1`|Set this option to enable VNC access to the container to view the deCONZ ZigBee mesh|
 |`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port|
 |`-e DECONZ_VNC_PASSWORD=changeme`|Default password for VNC mode is 'changeme'; this option can (should) be used to change the default password|
+|`-e DECONZ_NOVNC_PORT=6080`|Default port for NOVNC is 6080; this option can be used to change this port|
 |`-e DECONZ_UPNP=0`|Set this option to 0 to disable uPNP, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/274|
 
 #### Docker-Compose
@@ -178,6 +179,11 @@ tigervncserver: /usr/bin/Xtigervnc did not start up, please look into '/root/.vn
 Invalid MIT-MAGIC-COOKIE-1 keyqt.qpa.screen: QXcbConnection: Could not connect to display :0
 Could not connect to any X display.
 ```
+
+By enabling VNC you also enabled noVNC which allows you to connect using a browser. Per default the port is been set to 6080 and if your are not using "--host" networking you need to open the port using the -p directive.
+Access is through https://hostname:6080/vnc.html, this is a self signed SSL certificate so you need to accept it before you can access the page. 
+
+NoVNC acts as a proxie, meaning if you would disable VNC functionality, noVNC will not be available as well.
 
 ### Gotchas / Known Issues
 
