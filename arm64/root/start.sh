@@ -21,6 +21,11 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
     exit 1
   fi
 
+  if [ "$DECONZ_NOVNC_PORT" -lt 6080 ]; then
+    echo "[marthoc/deconz] ERROR - NOVNC port must be 6080 or greater!"
+    exit 1
+  fi
+
   DECONZ_VNC_DISPLAY=:$(($DECONZ_VNC_PORT - 5900))
   echo "[marthoc/deconz] VNC port: $DECONZ_VNC_PORT"
   
@@ -40,6 +45,14 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   
   # Export VNC display variable
   export DISPLAY=$DECONZ_VNC_DISPLAY
+  
+  # Generate SSL certificate
+  openssl req -x509 -nodes -newkey rsa:2048 -keyout /root/.vnc/novnc.pem -out /root/.vnc/novnc.pem -days 365 -subj "/CN=deconz"
+
+  #Start noVNC
+  websockify -D --web=/usr/share/novnc/ --cert=/root/.vnc/novnc.pem $DECONZ_NOVNC_PORT localhost:$DECONZ_VNC_PORT
+  echo "[marthoc/deconz] NOVNC port: $DECONZ_NOVNC_PORT"
+
 else
   echo "[marthoc/deconz] VNC Disabled"
   DECONZ_OPTS="$DECONZ_OPTS -platform minimal"
