@@ -32,9 +32,13 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   if [ ! -e /root/.vnc ]; then
     mkdir /root/.vnc
   fi
-  
+
   # Set VNC password
-  echo "$DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /root/.vnc/passwd
+  if [ "$DECONZ_VNC_PASSWORD_FILE" != 0 ]; then
+      cat "$DECONZ_VNC_PASSWORD_FILE" | tigervncpasswd -f > /root/.vnc/passwd
+  else
+    echo "$DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /root/.vnc/passwd
+  fi
   chmod 600 /root/.vnc/passwd
 
   # Cleanup previous VNC session data
