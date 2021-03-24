@@ -94,7 +94,7 @@ echo " "
 if [[ $correctVal == [yY] ]]; then
         echo "Flashing..."
         echo " "
-        $FLASHER -d $deviceName -f "$filePath"
+        $FLASHER -t 60 -d $deviceName -f "$filePath"
 
         retVal=$?
         if (( retVal != 0 )); then
