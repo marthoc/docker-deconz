@@ -36,7 +36,7 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   tigervncserver -kill "$DECONZ_VNC_DISPLAY"
 
   # Set VNC security
-  tigervncserver -SecurityTypes VncAuth,TLSVnc "$DECONZ_VNC_DISPLAY"
+  tigervncserver $DECONZ_VNC_OPTS -SecurityTypes VncAuth,TLSVnc "$DECONZ_VNC_DISPLAY"
   
   # Export VNC display variable
   export DISPLAY=$DECONZ_VNC_DISPLAY
