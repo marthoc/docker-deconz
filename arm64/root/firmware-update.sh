@@ -29,7 +29,7 @@ typeset -A FLASHER_PARAM_PRINT=(
 # Default values
 typeset -A FLASHER_PARAM_VALUES=(
     [-d]="$DECONZ_DEVICE"
-    [-t]="30"
+    [-t]="60"
 )
 
 # ---------------------------
@@ -113,7 +113,7 @@ echo " "
 echo "-------------------------------------------------------------------"
 echo " "
 
-parse_options
+parse_options "$@"
 
 echo " "
 echo "Listing attached devices..."
