@@ -4,7 +4,37 @@
 # Configuration
 # ===========================
 VERSION=0.7
+# ---------------------------
+# Flasher and options
+# ---------------------------
 FLASHER=/usr/bin/GCFFlasher_internal
+FLASHER_PARAM_LIST=( -d -f -s -t -R -B -x )
+typeset -A FLASHER_PARAM_NAMES=( # GCFFlasher <options>
+                                 #  -r              force device reset without programming
+    [-f]="Firmware file"         #  -f <firmware>   flash firmware file
+    [-d]="Device path ."         #  -d <device>     device number or path to use, e.g. 0, /dev/ttyUSB0 or RaspBee
+    [-s]="Serial number"         #  -s <serial>     serial number to use
+    [-t]="Timeout ....."         #  -t <timeout>    retry until timeout (seconds) is reached
+    [-R]="Retries ....."         #  -R <retries>    max. retries
+    [-B]="Baudrate ...."         #  -B <baudrate>   custom baudrate
+                                 #  -l              list devices
+    [-x]="Loglevel ...."         #  -x <loglevel>   debug log level 0, 1, 3
+                                 #  -j <test>       runs a test 1
+                                 #  -h -?           print this help
+)
+typeset -A FLASHER_PARAM_PRINT=(
+    [-f]="[^/]*$"
+    [default]=".*"
+)
+# Default values
+typeset -A FLASHER_PARAM_VALUES=(
+    [-d]="$DECONZ_DEVICE"
+    [-t]="60"
+)
+
+# ---------------------------
+# Firmware details
+# ---------------------------
 FW_PATH=/usr/share/deCONZ/firmware/
 FW_ONLINE_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/
 
@@ -59,6 +89,21 @@ function exit_on_enter() {
     [[ -n $input ]] || exit_with_error
 }
 
+# ===========================
+# utility functions
+# ===========================
+# ---------------------------
+# Parse all options passed to the script.
+# Options of the flasher are valid options.
+# ---------------------------
+function parse_options() {
+    while (( $# > 0)); do
+        [[ -n ${FLASHER_PARAM_NAMES[$1]} ]] || exit_with_error "Unknown argument '$1'. Exiting ..."
+        FLASHER_PARAM_VALUES[$1]="$2"
+        shift 2
+    done
+}
+
 echo "-------------------------------------------------------------------"
 echo " "
 echo "             marthoc/deconz Firmware Flashing Script"
@@ -67,6 +112,9 @@ echo "                       Version: $VERSION"
 echo " "
 echo "-------------------------------------------------------------------"
 echo " "
+
+parse_options "$@"
+
 echo " "
 echo "Listing attached devices..."
 echo " "
@@ -77,8 +125,9 @@ echo " "
 echo "Enter the full device path, or press Enter now to exit."
 echo " "
 
-read -p "Device path : " deviceName
-exit_on_enter $deviceName
+param=-d
+read -ep "${FLASHER_PARAM_NAMES[$param]}: " -i "${FLASHER_PARAM_VALUES[$param]}" FLASHER_PARAM_VALUES[$param]
+exit_on_enter ${FLASHER_PARAM_VALUES[$param]}
 
 echo " "
 echo "-------------------------------------------------------------------"
@@ -93,41 +142,50 @@ echo "from $FW_ONLINE_BASE"
 echo "or press Enter now to exit."
 echo " "
 
-read -p "File Name : " fileName
+param=-f
+read -ep "${FLASHER_PARAM_NAMES[$param]}: " -i "${FLASHER_PARAM_VALUES[$param]##*/}" fileName
 exit_on_enter $fileName
+FLASHER_PARAM_VALUES[$param]="${FW_PATH%/}/$fileName"
 
 echo " "
-filePath="${FW_PATH%/}/$fileName"
-if [[ ! -f $filePath ]]; then
+if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
     echo "File not found locally. Try to download?"
-    read -p "Enter Y to proceed, any other entry to exit: " answer
+    read -ep "Enter Y to proceed, any other entry to exit: " answer
     [[ $answer == [yY] ]] || exit_with_error
 
     echo " "
     echo "Downloading..."
     echo " "
-    curl --fail --output "$filePath" "${FW_ONLINE_BASE%/}/$fileName" && [[ -f $filePath ]]
-    delete_and_exit_on_error "$filePath" "Download Error! Please re-run this script..."
+    curl --fail --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_BASE%/}/$fileName" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
+    delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
     echo " "
     echo "Download complete! Checking md5 checksum..."
     md5=$(curl --fail --silent "${FW_ONLINE_BASE%/}/${fileName}.md5")
-    [[ -n $md5 ]] || delete_and_exit_on_error "$filePath" "Checksum file '${fileName}.md5' not found! Please re-run this script..."
-    echo "${md5% *} ${filePath}" | md5sum --check
-    delete_and_exit_on_error "$filePath" "Error comparing checksums! Please re-run this script..."
+    [[ -n $md5 ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Checksum file '${fileName}.md5' not found! Please re-run this script..."
+    echo "${md5% *} ${FLASHER_PARAM_VALUES[-f]}" | md5sum --check
+    delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Error comparing checksums! Please re-run this script..."
     echo " "
 fi
 
 echo "-------------------------------------------------------------------"
 echo " "
-echo "Device ......: $deviceName"
-echo "Firmware File: $fileName"
+FLASHER_PARAMS=()
+for param in "${FLASHER_PARAM_LIST[@]}"; do
+    value="${FLASHER_PARAM_VALUES[$param]}"
+    [[ -n $value ]] || continue
+    FLASHER_PARAMS+=( "$param" "$value" )
+
+    pattern="${FLASHER_PARAM_PRINT[$param]-${FLASHER_PARAM_PRINT[default]}}"
+    [[ $value =~ $pattern ]] && printf "%s: %s\n" "${FLASHER_PARAM_NAMES[$param]}" "${BASH_REMATCH}"
+done
+
 echo " "
-echo "Are the above device and firmware values correct?"
-read -p "Enter Y to proceed, any other entry to exit: " correctVal
+echo "Are the above values correct?"
+read -ep "Enter Y to proceed, any other entry to exit: " correctVal
 [[ $correctVal == [yY] ]] || exit_with_error
 
 echo " "
 echo "Flashing..."
 echo " "
-$FLASHER -t 60 -d $deviceName -f "$filePath"
+$FLASHER "${FLASHER_PARAMS[@]}"
 exit_on_error "Flashing Error! Please re-run this script..."

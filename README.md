@@ -166,6 +166,20 @@ If you have multiple usb devices, you can map the `/dev/...` volume correspondin
 docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DExxxxxxx-if00:/dev/ttyACM0  -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz
 ```
 
+You could also put additional options to the end of this call:
+```bash
+docker run ... marthoc/deconz <option1> <value1> <option2> <value2> ...
+```
+If these are valid options for the flashing tool they will be added to the call:
+- `-f <firmware>`   flash firmware file
+- `-d <device>`     device number or path to use, e.g. 0, /dev/ttyUSB0 or RaspBee
+- `-t <timeout>`    retry until timeout (seconds) is reached
+- `-R <retries>`    max. retries
+- `-x <loglevel>`   debug log level 0, 1, 3
+
+Please note that the values for device and firmware-file are still asked by the script but your options are taken as default.
+The timeout defaults to 60 seconds.
+
 4. Follow the prompts:
 - Enter the path (e.g. `/dev/ttyUSB0`) that corresponds to your device in the listing.
 - Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
@@ -178,6 +192,10 @@ docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=AL
 Q: Why does the script give an error about not being able to unload modules ftdi_sio and usbserial, or that the device couldn't be rest?
 
 A: In order to flash the device, no other program or device on the system can be using these kernel modules or the device. Stop any program/container that could be using the modules or device (likely deCONZ) and then invoke the script again. If the error persists, you may need to temporarily remove other USB serial devices from the system in order allow the script to completely unload the kernel modules.
+
+Q: Why does a flush run fail after some seconds even if I specified a timeout much longer?
+
+A: By setting a timeout you allowed the flashing tool to start as many runs as will fit into this period. The timeout of a single run can not be changed by parameters.
 
 ### Viewing the deCONZ ZigBee mesh with VNC
 
