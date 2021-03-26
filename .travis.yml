@@ -52,10 +52,17 @@ after_success:
       docker push marthoc/deconz:arm64-$BUILD_VERSION
       docker push marthoc/deconz:aarch64
       docker push marthoc/deconz:aarch64-$BUILD_VERSION
+# Update "latest" multiarch tag
       ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
         --platforms linux/amd64,linux/arm/v7,linux/arm64 \
         --template marthoc/deconz:ARCHVARIANT-$BUILD_VERSION \
-        --target marthoc/deconz:latest 
+        --target marthoc/deconz:latest
+# Update version multiarch tag
+      ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
+        --platforms linux/amd64,linux/arm/v7,linux/arm64 \
+        --template marthoc/deconz:ARCHVARIANT-$BUILD_VERSION \
+        --target marthoc/deconz:$BUILD_VERSION
+# Update "stable" multiarch tag if a stable release
       if [ "$BUILD_CHANNEL" == "stable" ]; then
         ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
           --platforms linux/amd64,linux/arm/v7,linux/arm64 \
