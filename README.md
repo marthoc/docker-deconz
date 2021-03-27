@@ -144,7 +144,17 @@ After running the above command and rebooting, RaspBee should be available at /d
 
 ### Updating Conbee/RaspBee Firmware
 
-Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch. To use it, follow the below instructions:
+Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch.
+
+Note, however, that this way of flashing the firmware **is not guaranteed to work**. If it does it will speed up the whole process. If it doesn't you just have to update the firmware manually as described here:
+
+https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Update-deCONZ-manually
+
+This could involve that you have to plug your device into another system where the deCONZ software runs without docker (i.e. windows).
+
+The script calls the flashing tool `GCFFlasher_internal` which will output any failures. In some situations the flasher runs successfully but deCONZ couldn't be started afterwards: `disconnected device`. In all these cases you may start the process some more times and/or play with the parameters for `retries` and `timeout`.
+
+To use the script for updating the firmware, follow the below instructions:
 
 ##### 1. Check your deCONZ container logs for the update firmware file name:
 Type `docker logs [container name]`, and look for lines near the beginning of the log that look like this, noting the `.GCF` file name listed (you'll need this later):
