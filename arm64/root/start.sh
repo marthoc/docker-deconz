@@ -30,7 +30,7 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
 
   # Set VNC password
   if [ "$DECONZ_VNC_PASSWORD_FILE" != 0  && -f "$DECONZ_VNC_PASSWORD_FILE" ]; then
-      DECONZ_VNC_PASSWORD=$(cat $DECONZ_VNC_PASSWORD)
+      DECONZ_VNC_PASSWORD=$(cat $DECONZ_VNC_PASSWORD_FILE)
   fi
   
   echo "$DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /root/.vnc/passwd
