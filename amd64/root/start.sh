@@ -20,7 +20,7 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
     echo "[marthoc/deconz] ERROR - VNC port must be 5900 or greater!"
     exit 1
   fi
-  
+
   if [ "$DECONZ_NOVNC_PORT" -lt 6080 ]; then
     echo "[marthoc/deconz] ERROR - NOVNC port must be 6080 or greater!"
     exit 1
@@ -32,13 +32,13 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   if [ ! -e /root/.vnc ]; then
     mkdir /root/.vnc
   fi
-  
+
   # Set VNC password
-  if [ "$DECONZ_VNC_PASSWORD_FILE" != 0 ]; then
-      cat "$DECONZ_VNC_PASSWORD_FILE" | tigervncpasswd -f > /root/.vnc/passwd
-  else
-    echo "$DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /root/.vnc/passwd
+  if [ "$DECONZ_VNC_PASSWORD_FILE" != 0  && -f "$DECONZ_VNC_PASSWORD_FILE" ]; then
+      DECONZ_VNC_PASSWORD=$(cat $DECONZ_VNC_PASSWORD)
   fi
+  
+  echo "$DECONZ_VNC_PASSWORD" | tigervncpasswd -f > /root/.vnc/passwd
   chmod 600 /root/.vnc/passwd
 
   # Cleanup previous VNC session data
@@ -49,7 +49,7 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   
   # Export VNC display variable
   export DISPLAY=$DECONZ_VNC_DISPLAY
-
+  
   # Generate SSL certificate
   openssl req -x509 -nodes -newkey rsa:2048 -keyout /root/.vnc/novnc.pem -out /root/.vnc/novnc.pem -days 365 -subj "/CN=deconz"
 
