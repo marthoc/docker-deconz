@@ -194,10 +194,10 @@ Invalid MIT-MAGIC-COOKIE-1 keyqt.qpa.screen: QXcbConnection: Could not connect t
 Could not connect to any X display.
 ```
 
-By enabling VNC you also enabled noVNC which allows you to connect using a browser. Per default the port is been set to 6080 and if your are not using "--host" networking you need to open the port using the -p directive.
-Access is through https://hostname:6080/vnc.html, this is a self signed SSL certificate so you need to accept it before you can access the page. 
+By enabling VNC, per default, you also enabled noVNC which allows you to connect using a browser. Per default the port is been set to 6080 and if your are not using "--host" networking you need to open the port using the -p directive.
+Access is through https://hostname:6080/vnc.html, this is a self signed SSL certificate so you need to accept it before you can access the page. If you not want to enable noVNC you can disable it using the environment variable `DECONZ_noVNC_PORT=0`
 
-NoVNC acts as a proxie, meaning if you would disable VNC functionality, noVNC will not be available as well.
+NoVNC acts as a proxy, meaning if you would disable VNC functionality, noVNC will not be available as well.
 
 ### Gotchas / Known Issues
 
