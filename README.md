@@ -146,18 +146,36 @@ After running the above command and rebooting, RaspBee should be available at /d
 
 ### Updating Conbee/RaspBee Firmware
 
-Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch. To use it, follow the below instructions:
+Firmware updates from the web UI will fail silently. Instead, an interactive utility script is provided as part of this Docker image that you can use to flash your device's firmware. The script has been tested and verified to work for Conbee on amd64 Debian linux and armhf Raspbian Stretch and RaspBee on armhf Raspbian Stretch.
 
-1. Check your deCONZ container logs for the update firmware file name: type `docker logs [container name]`, and look for lines near the beginning of the log that look like this, noting the .CGF file name listed (you'll need this later):
+Note, however, that this way of flashing the firmware **is not guaranteed to work**. If it does it will speed up the whole process. If it doesn't you just have to update the firmware manually as described here:
+
+https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Update-deCONZ-manually
+
+This could involve that you have to plug your device into another system where the deCONZ software runs without docker (i.e. windows).
+
+The script calls the flashing tool `GCFFlasher_internal` which will output any failures. In some situations the flasher runs successfully but deCONZ couldn't be started afterwards: `disconnected device`. In all these cases you may start the process some more times and/or play with the parameters for `retries` and `timeout`.
+
+To use the script for updating the firmware, follow the below instructions:
+
+##### 1. Check your deCONZ container logs for the update firmware file name:
+Type `docker logs [container name]`, and look for lines near the beginning of the log that look like this, noting the `.GCF` file name listed (you'll need this later):
 ```
 GW update firmware found: /usr/share/deCONZ/firmware/deCONZ_Rpi_0x261e0500.bin.GCF
 GW firmware version: 0x261c0500
 GW firmware version shall be updated to: 0x261e0500
 ```
 
-2. `docker stop [container name]` or `docker-compose down` to stop your running deCONZ container (you must do this or the firmware update will fail).
+##### 2. Stop your running deCONZ container. You must do this or the firmware update will fail:
+```bash
+docker stop [container name]
+```
+or
+```bash
+docker-compose down
+```
 
-3. Invoke the firmware update script: 
+##### 3. Invoke the firmware update script: 
 ```bash
 docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz
 ```
@@ -168,18 +186,45 @@ If you have multiple usb devices, you can map the `/dev/...` volume correspondin
 docker run -it --rm --entrypoint "/firmware-update.sh" --privileged --cap-add=ALL -v /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DExxxxxxx-if00:/dev/ttyACM0  -v /lib/modules:/lib/modules -v /sys:/sys marthoc/deconz
 ```
 
-4. Follow the prompts:
+You could also put additional options to the end of this call:
+```bash
+docker run ... marthoc/deconz [option1] [value1] [option2] [value2] ...
+```
+If these are valid options for the flashing tool they will be added to the call:
+|Option|Description|Default (if any)|
+|------|-----------|----------------|
+|`-f [firmware]`|flash firmware file||
+|`-d [device]`|device number or path to use, e.g. 0, /dev/ttyUSB0 or RaspBee|The value of DECONZ_DEVICE|
+|`-t [timeout]`|retry until timeout (seconds) is reached|60|
+|`-R [retries]`|max. retries||
+|`-x [loglevel]`|debug log level 0, 1, 3||
+
+Please note that the values for device and firmware-file are still asked by the script but your options are taken as default.
+
+##### 4. Follow the prompts:
 - Enter the path (e.g. `/dev/ttyUSB0`) that corresponds to your device in the listing.
 - Type or paste the full file name that corresponds to the file name that you found in the deCONZ container logs in step 1 (or, select a different filename, but you should have a good reason for doing this).
-- If the device/path and file name look OK, type Y to start flashing!
+If there are newer firmware files ([found here](https://deconz.dresden-elektronik.de/deconz-firmware/)) than the ones contained in your docker you could specify the name and the script will try to initiate a download. Just follow the prompts.
+- If the device/path, file name and listed options look OK, type Y to start flashing!
 
-5. Restart your deCONZ container (`docker start [container name]` or `docker-compose up`).
+##### 5. Restart your deCONZ container:
+```bash
+docker start [container name]
+```
+or
+```bash
+docker-compose up
+```
 
 #### Firmware Flashing Script FAQ
 
 Q: Why does the script give an error about not being able to unload modules ftdi_sio and usbserial, or that the device couldn't be rest?
 
 A: In order to flash the device, no other program or device on the system can be using these kernel modules or the device. Stop any program/container that could be using the modules or device (likely deCONZ) and then invoke the script again. If the error persists, you may need to temporarily remove other USB serial devices from the system in order allow the script to completely unload the kernel modules.
+
+Q: Why does a flash run fail after some seconds even if I specified a timeout much longer?
+
+A: By setting a timeout you allowed the flashing tool to start as many runs as will fit into this period. The timeout of a single run can not be changed by parameters.
 
 ### Viewing the deCONZ ZigBee mesh with VNC
 
