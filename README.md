@@ -12,8 +12,10 @@ Builds of this image are available on (and should be pulled from) Docker Hub, wi
 |---|-----------|
 |marthoc/deconz:latest|Latest release of deCONZ, stable or beta|
 |marthoc/deconz:stable|Stable releases of deCONZ only|
-|marthoc/deconz:arch-version|Specific releases of deCONZ, use only if you wish to pin your version of deCONZ|
+|marthoc/deconz:version|Specific versions of deCONZ, use only if you wish to pin your version of deCONZ|
 |marthoc/deconz:arch-test|Test builds of this image, not for use by end users, only for developer testing!|
+
+The "latest", "stable", and "version" tags have multiarch support for amd64, armv7, and arm64, so specifying any of these tags will pull the correct version for your architecture.
 
 Please consult Docker Hub for the latest available versions of this image.
 
