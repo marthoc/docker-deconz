@@ -74,7 +74,7 @@ Use these environment variables to change the default behaviour of the container
 |`-e DECONZ_VNC_MODE=1`|Set this option to enable VNC access to the container to view the deCONZ ZigBee mesh|
 |`-e DECONZ_VNC_PORT=5900`|Default port for VNC mode is 5900; this option can be used to change this port|
 |`-e DECONZ_VNC_PASSWORD=changeme`|Default password for VNC mode is 'changeme'; this option can (should) be used to change the default password|
-|`-e DECONZ_VNC_PASSWORD_FILE=/var/run/secret`|Per default this is disabled and DECONZ_VNC_PASSWORD is used. More details on secrets can be found in the [corresponding section from the official documentation](https://docs.docker.com/compose/compose-file/compose-file-v3/#secrets) |
+|`-e DECONZ_VNC_PASSWORD_FILE=/var/secrets/my_secret`|Per default this is disabled and DECONZ_VNC_PASSWORD is used. Details on creating secrets for use with Docker containers can be found in the [corresponding section from the official documentation](https://docs.docker.com/engine/swarm/secrets/) |
 |`-e DECONZ_NOVNC_PORT=6080`|Default port for noVNC is 6080; this option can be used to change this port; setting the port to `0` will disable the noVNC functionality|
 |`-e DECONZ_UPNP=0`|Set this option to 0 to disable uPNP, see: https://github.com/dresden-elektronik/deconz-rest-plugin/issues/274|
 
@@ -194,10 +194,12 @@ Invalid MIT-MAGIC-COOKIE-1 keyqt.qpa.screen: QXcbConnection: Could not connect t
 Could not connect to any X display.
 ```
 
-By enabling VNC, per default, you also enabled noVNC which allows you to connect using a browser. Per default the port is been set to 6080 and if your are not using "--host" networking you need to open the port using the -p directive.
-Access is through https://hostname:6080/vnc.html, this is a self signed SSL certificate so you need to accept it before you can access the page. If you not want to enable noVNC you can disable it using the environment variable `DECONZ_noVNC_PORT=0`
+By enabling VNC, per default, you also enabled noVNC which allows you to connect using a browser. Per default the port is been set to 6080 and if you are not using "--host" networking you need to open the port using the -p directive.
+Access is through https://hostname:6080/vnc.html, this is a self signed SSL certificate so you need to accept it before you can access the page. If you do not want to enable noVNC, you can disable it using the environment variable `DECONZ_NOVNC_PORT=0`
 
-NoVNC acts as a proxy, meaning if you would disable VNC functionality, noVNC will not be available as well.
+NoVNC acts as a proxy for the VNC server, meaning that if you disable VNC functionality, noVNC will not be available either.
+
+The minimum port for DECONZ_VNC_PORT must be 5900 or higher and the mimimum port for DECONZ_NOVNC_PORT must be 6080 or higher. 
 
 ### Gotchas / Known Issues
 
