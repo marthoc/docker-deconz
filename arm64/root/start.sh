@@ -29,7 +29,7 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
   fi
 
   # Set VNC password
-  if [ "$DECONZ_VNC_PASSWORD_FILE" != 0  && -f "$DECONZ_VNC_PASSWORD_FILE" ]; then
+  if [ "$DECONZ_VNC_PASSWORD_FILE" != 0 ] && [ -f "$DECONZ_VNC_PASSWORD_FILE" ]; then
       DECONZ_VNC_PASSWORD=$(cat $DECONZ_VNC_PASSWORD_FILE)
   fi
   
@@ -54,7 +54,19 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
     fi
 
     # Generate SSL certificate
-    openssl req -x509 -nodes -newkey rsa:2048 -keyout /root/.vnc/novnc.pem -out /root/.vnc/novnc.pem -days 365 -subj "/CN=deconz"
+    if [ -f "/root/.vnc/novnc.pem" ]; then
+      ENDDATE=`openssl x509 -noout -in /root/.vnc/novnc.pem -enddate | sed -e 's#notAfter=##'`
+      END=`date -d "${ENDDATE}" '+%s'`
+      NOW=`date '+%s'`
+      DIFF="$((${END}-${NOW}))"
+      if [ "${DIFF}" -lt 0 ]; then
+        echo "[marthoc/deconz] The certificate has expired!"
+      else
+        echo "[marthoc/deconz] The certificate will expire in $((${DIFF}/3600/24)) days."
+      fi
+    else
+      openssl req -x509 -nodes -newkey rsa:2048 -keyout /root/.vnc/novnc.pem -out /root/.vnc/novnc.pem -days 365 -subj "/CN=deconz"
+    fi
 
     #Start noVNC
     websockify -D --web=/usr/share/novnc/ --cert=/root/.vnc/novnc.pem $DECONZ_NOVNC_PORT localhost:$DECONZ_VNC_PORT
