@@ -42,8 +42,8 @@ RUN apt-get update && \
         sqlite3 \
         tigervnc-standalone-server \
         tigervnc-common \
-	novnc \
-	websockify \
+        novnc \
+        websockify \
         openbox \
         xfonts-base \
         xfonts-scalable && \
