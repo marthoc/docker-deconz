@@ -199,7 +199,7 @@ Access is through https://hostname:6080/vnc.html, this is a self signed SSL cert
 
 NoVNC acts as a proxy for the VNC server, meaning that if you disable VNC functionality, noVNC will not be available either.
 
-The minimum port for DECONZ_VNC_PORT must be 5900 or higher and the mimimum port for DECONZ_NOVNC_PORT must be 6080 or higher. 
+The minimum port for DECONZ_VNC_PORT must be 5900 or higher and the minimum port for DECONZ_NOVNC_PORT must be 6080 or higher. 
 
 ### Gotchas / Known Issues
 
