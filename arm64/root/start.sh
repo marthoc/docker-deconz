@@ -53,21 +53,19 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
       exit 1
     fi
 
-    # Generate SSL certificate
-    if [ -f "/root/.vnc/novnc.pem" ]; then
-      ENDDATE=`openssl x509 -noout -in /root/.vnc/novnc.pem -enddate | sed -e 's#notAfter=##'`
-      END=`date -d "${ENDDATE}" '+%s'`
-      NOW=`date '+%s'`
-      DIFF="$((${END}-${NOW}))"
-      if [ "${DIFF}" -lt 0 ]; then
-        echo "[marthoc/deconz] The certificate has expired!"
-      else
-        echo "[marthoc/deconz] The certificate will expire in $((${DIFF}/3600/24)) days."
+    # Assert valid SSL certificate
+    NOVNC_CERT="novnc.pem"
+    if [ -f "$NOVNC_CERT" ]; then
+      openssl x509 -noout -in "$NOVNC_CERT" -checkend 0 > /dev/null
+      if [ $? != 0 ]; then
+        echo "[marthoc/deconz] The noVNC SSL certificate has expired; generating a new certificate now."
+       	rm "$NOVNC_CERT"
       fi
-    else
-      openssl req -x509 -nodes -newkey rsa:2048 -keyout /root/.vnc/novnc.pem -out /root/.vnc/novnc.pem -days 365 -subj "/CN=deconz"
     fi
-
+    if [ ! -f "$NOVNC_CERT" ]; then
+      openssl req -x509 -nodes -newkey rsa:2048 -keyout "$NOVNC_CERT" -out "$NOVNC_CERT" -days 365 -subj "/CN=deconz"
+    fi
+    
     #Start noVNC
     websockify -D --web=/usr/share/novnc/ --cert=/root/.vnc/novnc.pem $DECONZ_NOVNC_PORT localhost:$DECONZ_VNC_PORT
     echo "[marthoc/deconz] NOVNC port: $DECONZ_NOVNC_PORT"
