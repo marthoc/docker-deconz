@@ -10,6 +10,8 @@ script:
 # Parse variables
   - BUILD_VERSION=$(cat version.json | jq -r .version)
   - BUILD_CHANNEL=$(cat version.json | jq -r .channel)
+# Login to Docker Hub (to avoid rate-limiting on builds)
+  - docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
 # Build amd64
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:amd64" ./amd64
 # Build armv7
@@ -19,8 +21,6 @@ script:
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:arm64" ./arm64
 after_success:
-# Login to Docker Hub
-  - docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
 # Tag and push test images after a successful build
   - docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-test
   - docker push marthoc/deconz:amd64-test
@@ -48,17 +48,14 @@ after_success:
       docker push marthoc/deconz:arm64-$BUILD_VERSION
       docker push marthoc/deconz:aarch64
       docker push marthoc/deconz:aarch64-$BUILD_VERSION
-# Update "latest" multiarch tag
       ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
         --platforms linux/amd64,linux/arm/v7,linux/arm64 \
         --template marthoc/deconz:ARCHVARIANT-$BUILD_VERSION \
         --target marthoc/deconz:latest
-# Update version multiarch tag
       ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
         --platforms linux/amd64,linux/arm/v7,linux/arm64 \
         --template marthoc/deconz:ARCHVARIANT-$BUILD_VERSION \
         --target marthoc/deconz:$BUILD_VERSION
-# Update "stable" multiarch tag if a stable release
       if [ "$BUILD_CHANNEL" == "stable" ]; then
         ./manifest-tool --username $DOCKER_LOGIN --password $DOCKER_PASS push from-args \
           --platforms linux/amd64,linux/arm/v7,linux/arm64 \
