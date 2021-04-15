@@ -1,5 +1,5 @@
 FROM multiarch/qemu-user-static:aarch64 as qemu
-FROM arm64v8/debian:10.6-slim
+FROM arm64v8/ubuntu:20.04
 COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
 # Build arguments
@@ -20,7 +20,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DECONZ_VNC_MODE=0 \
     DECONZ_VNC_DISPLAY=0 \
     DECONZ_VNC_PASSWORD=changeme \
+    DECONZ_VNC_PASSWORD_FILE=0 \
     DECONZ_VNC_PORT=5900 \
+    DECONZ_NOVNC_PORT=6080 \
     DECONZ_UPNP=1
 
 # Install deCONZ dependencies
@@ -40,7 +42,9 @@ RUN apt-get update && \
         sqlite3 \
         tigervnc-standalone-server \
         tigervnc-common \
-        wmii \
+        novnc \
+        websockify \
+        openbox \
         xfonts-base \
         xfonts-scalable && \
     apt-get clean && \
@@ -60,6 +64,6 @@ RUN dpkg -i /deconz.deb && \
 
 VOLUME [ "/root/.local/share/dresden-elektronik/deCONZ" ]
 
-EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT}
+EXPOSE ${DECONZ_WEB_PORT} ${DECONZ_WS_PORT} ${DECONZ_VNC_PORT} ${DECONZ_NOVNC_PORT}
 
 ENTRYPOINT [ "/start.sh" ]
