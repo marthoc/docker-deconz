@@ -1,5 +1,5 @@
 FROM multiarch/qemu-user-static:arm as qemu
-FROM arm32v7/ubuntu:20.04
+FROM arm32v7/debian:10.9-slim
 COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin
 
 # Build arguments
