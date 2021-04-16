@@ -6,7 +6,7 @@ dist: xenial
 env:
   global:
     - secure: "Dj7E91VNm5GxY0vMGXdM0fKUtTLtBKWIqC3eZJq4YsUXZTCCA7AKCqa7iD7CksHgcvn+vOYR1ijXou5kWK8HuIcTX7ipSavaOWljPIxqopTvP0cVFmHO2ViRYzU11kRQMIDOi6eEQ2wlqdGpkIxD4aPUYcNjM+A4T5W2ObCSMa9YN9/1GEguTQ4H5KEVORutJMpS60IB9qf8t1UH2NOstOy2xXKoYCwcUZOm5CoTjQhCWROnuM1JWMTX0f7QPbxn+GhAVsiSnpJYTTQxaH6XzGSh5OW0aduQweMk0vNkGpmnFUqCHs26ti7Jte8cIRMF7Hvk5TlsxjRp4xKG54jMD/Ai8qhsGieynwY0+sERVcoYBPhEBpK98THOUeCdKWmbd8PTpV3NcucHgn7cp8CWU04v6guT8u0AdwOnOXfhJ7K4U4VpLgw6LfE+Qf0bXrYqAdyZOWKslk5C6W+s5mRwFprmUmq7yfeGQ/QS8ND3iaMfB/EUc3486lyLgV8KmuUCNRDKzv6db4NI8ov9Nks91b3vouAa1/nTwWFOCgGl0BBCpZGJ6LYLvCyEviA+XXgkAgoA7SV0Y7A0Isvqu7WgsOhSaVa8J6MUuznN7ETE9InrdbPVmzUO+Y5lMYiLJhaRysweG69IO+Uv8BOruRAh6zbPz6n5lZlD4uzY7gDQGOU="
-    - secure: "r3AQ2+jsohtlyE/RZtsKnVT0JT6vM0iuDK0YdZw6Q/7iyAQkC4IeAtP76J9wDWZb0EMGrV+pEFbNrjJdy0fkd1aG6L8x8XkXtdKyNfezFtSxMovDW5f5BCB65miRvyRRkMjikkSu7PRxJGrS3632yL8i5+QyFIk93da2hKrhHYRZu6JIwI6Ga5yo2zP2TG20xXMQDqFlM5af8zCNgZ74lCX7hvYscYXYi2MGdArR/1SE22/6g+ZYYfRZIgP0nATGxRmrfQbY9i257Z1HY44tug7nHC3RaGvKLT4ptInLPFn0a4fLXjdikYXnDEkwWNXkgXSP7H77Gb4NZ48NHaC+9Upqwv2qX1KjMQ96zPCz4Y0upndKIZGvWv0roHZ0BY/S2Es7SP3WRa1qznquZb8374I6XvVXEUvqq+no/036yP6CNyobhy4M5gO6ouet3VtKpDaFZ95Doj5JOu1eqhYMj14Z5LK35yANPl7BX6U4VS0WYQWIfaHut/2rAtExIP2ThS3JotYBgrnzndNAjJlSWB3JPK4454nZGn0JXcjwjiWou8kC3NzSdZ03lNpObmc1hIIMIzSaJ3RzOyZzfS0RuNfLYxplXcjGFywE0/pEZq0ccW61K2pI0FELnu+YkeOvm8ZPif6Jwl4c89Q5RZFqk2zDrhngiSok6JnkgMNghgo="
+    - secure: "iMERpUa2vSIsPZs/WdjgtDmkDd+64TuzGnDIFuI/FAOaXfh2Jx1Srs/xuLMy/XSd+vEy+j0kWVdJCDoPZl7ymPlebqNfR7NjLiR6EM0EmxSyqZCMo/MnXJ3mFKsaJARdRolpEw17sumo8Rwqo5o01pNsZxGP9TDmTSVSODylAWILPkfekWAuVI3Dhjuxzvk/Xg35t7S8a0DIuOgXUm+hEumti4PrFFPrSy4hthTON73WTy1czuaQlafqET/jgzGy9/zEveW+Xflxt8XhJF6Uc/4DEIKVLf0Q5lkrOq1poJQsDrug8X6XbXPKTkrOG+EM9qiZszT+wup0DMck9r/KGOfGIPAkAki2Tj1HpC0vF5bFRi0j71zMiXOClPQFwJkuHDz1z4xvBF7EnfKgxaelHuHXjaVqIV2LW7XJIO3RMX91dCKHvV+hneaiUfKVLI3oI9hUVDYM+ip5+iuwbewhs9Nel9A1estbwa2WvgoppzAVxnGJB7w8PUFCH34CGXB87CK+EvSoMc9PjcFo6vhl88AyYgZCY3Oi+i3y49hXO4VDeh4Ip3NftlLWgrRDIqFxCJH8BLT0uoTtaMb3DVy44UthmzNll4FpVCvBGdsLNzaPAW3BsXCTcnj8W8xBzGCWOWH3U7aBXThlSuz4d6aejyrtSq65rxzotxjBdAKOk2I="
 install:
   - sudo apt-get install -y jq
   - wget https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64 -O manifest-tool
@@ -16,7 +16,7 @@ script:
   - BUILD_VERSION=$(cat version.json | jq -r .version)
   - BUILD_CHANNEL=$(cat version.json | jq -r .channel)
 # Login to Docker Hub (to avoid rate-limiting on builds)
-  - docker login --username $DOCKER_LOGIN --password $DOCKER_PASS
+  - echo $DOCKER_TOKEN | docker login --username $DOCKER_LOGIN --password-stdin
 # Build amd64
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:amd64" ./amd64
 # Build armv7
