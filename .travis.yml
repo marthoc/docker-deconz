@@ -16,7 +16,7 @@ script:
   - BUILD_VERSION=$(cat version.json | jq -r .version)
   - BUILD_CHANNEL=$(cat version.json | jq -r .channel)
 # Login to Docker Hub (to avoid rate-limiting on builds)
-  - docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
+  - echo "$DOCKER_PASS" | docker login -u "$DOCKER_LOGIN" --password-stdin
 # Build amd64
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:amd64" ./amd64
 # Build armv7
