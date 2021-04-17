@@ -11,8 +11,6 @@ script:
 # Parse variables
   - BUILD_VERSION=$(cat version.json | jq -r .version)
   - BUILD_CHANNEL=$(cat version.json | jq -r .channel)
-# Login to Docker Hub (to avoid rate-limiting on builds)
-  - docker login -u="$DOCKER_LOGIN" -p="$DOCKER_PASS"
 # Build amd64
   - docker build --build-arg VERSION=$BUILD_VERSION --build-arg CHANNEL=$BUILD_CHANNEL -t "marthoc/deconz:amd64" ./amd64
 # Build armv7
@@ -32,6 +30,7 @@ after_success:
 # If merged to master, tag and push production images and update manifests
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_TOKEN"
       docker tag marthoc/deconz:amd64 marthoc/deconz:amd64-$BUILD_VERSION
       docker push marthoc/deconz:amd64
       docker push marthoc/deconz:amd64-$BUILD_VERSION
