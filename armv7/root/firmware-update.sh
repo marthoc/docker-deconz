@@ -36,7 +36,8 @@ typeset -A FLASHER_PARAM_VALUES=(
 # Firmware details
 # ---------------------------
 FW_PATH=/usr/share/deCONZ/firmware/
-FW_ONLINE_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/
+FW_ONLINE_STABLE_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/
+FW_ONLINE_BETA_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/beta/
 
 # ===========================
 # exit functions
@@ -138,8 +139,11 @@ ls -1 "$FW_PATH"
 echo " "
 echo "Enter the firmware file name from above, including extension."
 echo "Alternatively, you may enter the name of a firmware file to download"
-echo "from $FW_ONLINE_BASE"
-echo "or press Enter now to exit."
+echo "from any of the following sources:"
+echo " - $FW_ONLINE_STABLE_BASE        (Stable)"
+echo " - $FW_ONLINE_BETA_BASE   (Beta)"  
+echo " "
+echo "If you wish to exit, just hit Enter."
 echo " "
 
 param=-f
@@ -156,11 +160,13 @@ if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
     echo " "
     echo "Downloading..."
     echo " "
-    curl --fail --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_BASE%/}/$fileName" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
-    delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
+    curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_STABLE_BASE%/}/$fileName" || \
+    curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_BETA_BASE%/}/$fileName"
+    [[ -f ${FLASHER_PARAM_VALUES[-f]} ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
     echo " "
     echo "Download complete! Checking md5 checksum..."
-    md5=$(curl --fail --silent "${FW_ONLINE_BASE%/}/${fileName}.md5")
+    md5=$(curl --fail --silent "${FW_ONLINE_STABLE_BASE%/}/${fileName}.md5") || \
+    md5=$(curl --fail --silent "${FW_ONLINE_BETA_BASE%/}/${fileName}.md5")
     [[ -n $md5 ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Checksum file '${fileName}.md5' not found! Please re-run this script..."
     echo "${md5% *} ${FLASHER_PARAM_VALUES[-f]}" | md5sum --check
     delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Error comparing checksums! Please re-run this script..."
