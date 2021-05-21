@@ -159,7 +159,6 @@ if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
 
     echo " "
     echo "Downloading..."
-    echo " "
     curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_STABLE_BASE%/}/$fileName" || \
     curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_BETA_BASE%/}/$fileName"
     [[ -f ${FLASHER_PARAM_VALUES[-f]} ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
