@@ -36,8 +36,11 @@ typeset -A FLASHER_PARAM_VALUES=(
 # Firmware details
 # ---------------------------
 FW_PATH=/usr/share/deCONZ/firmware/
-FW_ONLINE_STABLE_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/
-FW_ONLINE_BETA_BASE=http://deconz.dresden-elektronik.de/deconz-firmware/beta/
+typeset -A FW_ONLINE_BASES=(
+    [stable]="http://deconz.dresden-elektronik.de/deconz-firmware/"
+    [beta]="http://deconz.dresden-elektronik.de/deconz-firmware/beta/"
+)
+FW_ONLINE_BASE_ORDER=( stable beta )
 
 # ===========================
 # exit functions
@@ -140,8 +143,9 @@ echo " "
 echo "Enter the firmware file name from above, including extension."
 echo "Alternatively, you may enter the name of a firmware file to download"
 echo "from any of the following sources:"
-echo " - $FW_ONLINE_STABLE_BASE        (Stable)"
-echo " - $FW_ONLINE_BETA_BASE   (Beta)"  
+for base in "${FW_ONLINE_BASE_ORDER[@]}"; do
+    printf " - %-60s (%s)\n" "${FW_ONLINE_BASES[$base]}" "$base"
+done
 echo " "
 echo "If you wish to exit, just hit Enter."
 echo " "
@@ -151,21 +155,23 @@ read -ep "${FLASHER_PARAM_NAMES[$param]}: " -i "${FLASHER_PARAM_VALUES[$param]##
 exit_on_enter $fileName
 FLASHER_PARAM_VALUES[$param]="${FW_PATH%/}/$fileName"
 
-echo " "
 if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
-    echo "File not found locally. Try to download?"
-    read -ep "Enter Y to proceed, any other entry to exit: " answer
+	for base in "${FW_ONLINE_BASE_ORDER[@]}"; do
+    	fw_url="${FW_ONLINE_BASES[$base]%/}/$fileName"
+    	curl --fail --silent --head --output /dev/null "$fw_url" && fw_exist_online=$? && break
+	done
+	[[ $fw_exist_online -eq "0" ]] || exit_with_error "Can't find '$fileName' neither locally nor online. Exiting ..."
+
+    read -ep "File not found locally. Enter Y to download from ${fw_url} " answer
     [[ $answer == [yY] ]] || exit_with_error
 
     echo " "
     echo "Downloading..."
-    curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_STABLE_BASE%/}/$fileName" || \
-    curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${FW_ONLINE_BETA_BASE%/}/$fileName"
-    [[ -f ${FLASHER_PARAM_VALUES[-f]} ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
+    curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${fw_url}" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
+	delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
     echo " "
     echo "Download complete! Checking md5 checksum..."
-    md5=$(curl --fail --silent "${FW_ONLINE_STABLE_BASE%/}/${fileName}.md5") || \
-    md5=$(curl --fail --silent "${FW_ONLINE_BETA_BASE%/}/${fileName}.md5")
+    md5=$(curl --fail --silent "${fw_url}.md5")
     [[ -n $md5 ]] || delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Checksum file '${fileName}.md5' not found! Please re-run this script..."
     echo "${md5% *} ${FLASHER_PARAM_VALUES[-f]}" | md5sum --check
     delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Error comparing checksums! Please re-run this script..."
