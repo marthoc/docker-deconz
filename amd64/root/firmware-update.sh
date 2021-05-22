@@ -160,12 +160,11 @@ if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
     	fw_url="${FW_ONLINE_BASES[$base]%/}/$fileName"
     	curl --fail --silent --head --output /dev/null "$fw_url" && fw_exist_online=$? && break
 	done
-	[[ $fw_exist_online -eq "0" ]] || exit_with_error "Can't find '$fileName' neither locally nor online. Exiting ..."
+	[[ -n $fw_exist_online ]] || exit_with_error "Can't find '$fileName' neither locally nor online. Exiting ..."
 
     read -ep "File not found locally. Enter Y to download from ${fw_url} " answer
     [[ $answer == [yY] ]] || exit_with_error
 
-    echo " "
     echo "Downloading..."
     curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${fw_url}" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
 	delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
