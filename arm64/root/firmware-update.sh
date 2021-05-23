@@ -168,7 +168,7 @@ if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
     echo " "
     echo "Downloading..."
     echo " "
-    curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${fw_url}" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
+    curl --fail --output "${FLASHER_PARAM_VALUES[-f]}" "${fw_url}" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
     delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
     echo " "
     echo "Download complete! Checking md5 checksum..."
