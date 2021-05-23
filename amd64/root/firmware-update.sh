@@ -155,19 +155,21 @@ read -ep "${FLASHER_PARAM_NAMES[$param]}: " -i "${FLASHER_PARAM_VALUES[$param]##
 exit_on_enter $fileName
 FLASHER_PARAM_VALUES[$param]="${FW_PATH%/}/$fileName"
 
+echo " "
 if [[ ! -f ${FLASHER_PARAM_VALUES[-f]} ]]; then
-	for base in "${FW_ONLINE_BASE_ORDER[@]}"; do
-    	fw_url="${FW_ONLINE_BASES[$base]%/}/$fileName"
-    	curl --fail --silent --head --output /dev/null "$fw_url" && fw_exist_online=$? && break
-	done
-	[[ -n $fw_exist_online ]] || exit_with_error "Can't find '$fileName' neither locally nor online. Exiting ..."
-
-    read -ep "File not found locally. Enter Y to download from ${fw_url} " answer
+    for base in "${FW_ONLINE_BASE_ORDER[@]}"; do
+        fw_url="${FW_ONLINE_BASES[$base]%/}/$fileName"
+        curl --fail --silent --head --output /dev/null "$fw_url" && break
+    done
+    exit_on_error "Can't find '$fileName' neither locally nor online. Exiting ..."
+    read -ep "File not found locally. Enter Y to download from ${fw_url}: " answer
     [[ $answer == [yY] ]] || exit_with_error
 
+    echo " "
     echo "Downloading..."
+    echo " "
     curl --fail --silent --output "${FLASHER_PARAM_VALUES[-f]}" "${fw_url}" && [[ -f ${FLASHER_PARAM_VALUES[-f]} ]]
-	delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
+    delete_and_exit_on_error "${FLASHER_PARAM_VALUES[-f]}" "Download Error! Please re-run this script..."
     echo " "
     echo "Download complete! Checking md5 checksum..."
     md5=$(curl --fail --silent "${fw_url}.md5")
