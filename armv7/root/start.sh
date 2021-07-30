@@ -33,16 +33,16 @@ echo "[marthoc/deconz] Checking device group ID"
 if [ "$DECONZ_DEVICE" != 0 ]; then
   DEVICE=$DECONZ_DEVICE
 else
- if [ -f /dev/ttyUSB0 ]; then
+ if [ -e /dev/ttyUSB0 ]; then
    DEVICE=/dev/ttyUSB0
  fi
- if [ -f /dev/ttyACM0 ]; then
+ if [ -e /dev/ttyACM0 ]; then
    DEVICE=/dev/ttyACM0
  fi
- if [ -f /dev/ttyAMA0 ]; then
+ if [ -e /dev/ttyAMA0 ]; then
    DEVICE=/dev/ttyAMA0
  fi
- if [ -f /dev/ttyS0 ]; then
+ if [ -e /dev/ttyS0 ]; then
    DEVICE=/dev/ttyS0
  fi
 fi
