@@ -109,7 +109,7 @@ if [ "$DECONZ_VNC_MODE" != 0 ]; then
       openssl req -x509 -nodes -newkey rsa:2048 -keyout "$NOVNC_CERT" -out "$NOVNC_CERT" -days 365 -subj "/CN=deconz"
     fi
 
-    chmod deconz:deconz $NOVNC_CERT
+    chown deconz:deconz $NOVNC_CERT
 
     #Start noVNC
     sudo -u deconz websockify -D --web=/usr/share/novnc/ --cert="$NOVNC_CERT" $DECONZ_NOVNC_PORT localhost:$DECONZ_VNC_PORT
