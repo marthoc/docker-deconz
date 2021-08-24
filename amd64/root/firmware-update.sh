@@ -37,8 +37,8 @@ typeset -A FLASHER_PARAM_VALUES=(
 # ---------------------------
 FW_PATH=/usr/share/deCONZ/firmware/
 typeset -A FW_ONLINE_BASES=(
-    [stable]="http://deconz.dresden-elektronik.de/deconz-firmware/"
-    [beta]="http://deconz.dresden-elektronik.de/deconz-firmware/beta/"
+    [stable]="https://deconz.dresden-elektronik.de/deconz-firmware/"
+    [beta]="https://deconz.dresden-elektronik.de/deconz-firmware/beta/"
 )
 FW_ONLINE_BASE_ORDER=( stable beta )
 
