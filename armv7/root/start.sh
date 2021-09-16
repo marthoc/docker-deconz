@@ -11,6 +11,7 @@ DECONZ_OPTS="--auto-connect=1 \
         --dbg-zcl=$DEBUG_ZCL \
         --dbg-zdp=$DEBUG_ZDP \
         --dbg-otau=$DEBUG_OTAU \
+	--dbg-error=$DEBUG_ERROR \
         --http-port=$DECONZ_WEB_PORT \
         --ws-port=$DECONZ_WS_PORT"
 
