@@ -39,6 +39,7 @@ RUN apt-get update && \
         libqt5sql5 \
         libqt5websockets5 \
         libqt5widgets5 \
+	libqt5qml5 \
         libssl1.1 \
         lsof \
         sqlite3 \
