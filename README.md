@@ -1,6 +1,12 @@
-## deCONZ Docker Image
 
-[![Build Status](https://travis-ci.org/marthoc/docker-deconz.svg?branch=master)](https://travis-ci.org/marthoc/docker-deconz) [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WBGSD2WU6944G)
+# ⚠️ Update November 15th 2021 ⚠️
+Further maintenance and development of this container will take place in the deCONZ community organization: https://github.com/deconz-community/deconz-docker.
+
+Instructions on how to migrate your existing install can be found there.
+
+---
+
+## deCONZ Docker Image
 
 This Docker image containerizes the deCONZ software from Dresden Elektronik, which controls a ZigBee network using a Conbee USB or RaspBee GPIO serial interface. This image runs deCONZ in "minimal" mode, for control of the ZigBee network via the WebUIs ("Wireless Light Control" and "Phoscon") and over the REST API and Websockets, and optionally runs a VNC server for viewing and interacting with the ZigBee mesh through the deCONZ UI.
 
