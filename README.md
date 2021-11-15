@@ -1,6 +1,9 @@
 
-# Update XX November 2021
-Development of this container have moved into the deCONZ community project: https://github.com/deconz-community/deconz-docker. Instructions on how to migrate your existing install can be found there!
+# ⚠️ Update November 15th 2021 ⚠️
+Further maintenance and development of this container will take place in the deCONZ community project: https://github.com/deconz-community/deconz-docker.
+Instructions on how to migrate your existing install can be found there.
+
+---
 
 ## deCONZ Docker Image
 
